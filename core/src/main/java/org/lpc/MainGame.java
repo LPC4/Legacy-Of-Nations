@@ -3,33 +3,36 @@ package org.lpc;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import lombok.Getter;
-import org.lpc.screens.GameScreen;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lpc.screens.GameScreen;
 import org.lpc.screens.MenuScreen;
 import org.lpc.screens.StartScreen;
 
 @Getter
 public class MainGame extends Game {
     private static final Logger LOGGER = LogManager.getLogger(MainGame.class);
+
     private GameStateManager gameStateManager;
     private GameScreen gameScreen;
     private StartScreen startScreen;
     private MenuScreen menuScreen;
     private InputHandler inputHandler;
+    private float accumulator;
 
     @Override
     public void create() {
-        LOGGER.info("Game created");
+        LOGGER.info("Initializing game");
 
         this.gameStateManager = new GameStateManager(this);
         this.gameScreen = new GameScreen(this);
         this.startScreen = new StartScreen(this);
         this.menuScreen = new MenuScreen(this);
         this.inputHandler = new InputHandler(this);
-        setScreen(startScreen);
+        this.accumulator = 0;
 
-        LOGGER.info("Game initialized");
+        setScreen(startScreen);
+        LOGGER.info("Game created and set to StartScreen");
     }
 
     @Override
@@ -37,8 +40,6 @@ public class MainGame extends Game {
         super.render(); // Delegate render to the current screen
         handleUpdate();
     }
-
-    private float accumulator = 0;
 
     private void handleUpdate() {
         accumulator += Gdx.graphics.getDeltaTime();
@@ -53,6 +54,12 @@ public class MainGame extends Game {
     @Override
     public void dispose() {
         super.dispose();
+        LOGGER.info("Disposing game resources");
+
+        gameScreen.dispose();
+        startScreen.dispose();
+        menuScreen.dispose();
+
         LOGGER.info("Game disposed");
     }
 }

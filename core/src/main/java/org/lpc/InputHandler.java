@@ -5,11 +5,14 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Timer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static org.lpc.utility.Constants.*;
 
 public class InputHandler implements InputProcessor {
+    private static final Logger LOGGER = LogManager.getLogger(InputHandler.class);
+
     private final MainGame game;
 
     private boolean isDragging;
@@ -19,6 +22,7 @@ public class InputHandler implements InputProcessor {
     public InputHandler(MainGame game) {
         this.game = game;
         Gdx.input.setInputProcessor(this);
+        LOGGER.info("InputHandler initialized");
     }
 
     @Override
@@ -38,34 +42,38 @@ public class InputHandler implements InputProcessor {
         Vector3 newWorldPos = camera.unproject(mousePos);
         camera.position.add(worldPos.x - newWorldPos.x, worldPos.y - newWorldPos.y, 0);
 
+        LOGGER.debug("Scrolled: amountX={}, amountY={}, newZoom={}", amountX, amountY, newZoom);
         return true;
     }
 
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.ESCAPE) {
-
             game.setScreen(game.getMenuScreen());
-        }
-
-        if (keycode == Input.Keys.F11) {
+            LOGGER.info("ESC key pressed, switching to MenuScreen");
+        } else if (keycode == Input.Keys.F11) {
             if (Gdx.graphics.isFullscreen()) {
                 Gdx.graphics.setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT);
+                LOGGER.info("Switched to windowed mode");
             } else {
                 Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+                LOGGER.info("Switched to fullscreen mode");
             }
         }
         return false;
     }
 
-
     @Override
     public boolean keyUp(int keycode) {
+        // Implement keyUp functionality if needed
         return false;
     }
 
     @Override
-    public boolean keyTyped(char character) { return false; }
+    public boolean keyTyped(char character) {
+        // Implement keyTyped functionality if needed
+        return false;
+    }
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
@@ -73,6 +81,7 @@ public class InputHandler implements InputProcessor {
             isDragging = true;
             lastX = screenX;
             lastY = screenY;
+            LOGGER.debug("Touch down: screenX={}, screenY={}", screenX, screenY);
         }
         return true;
     }
@@ -81,12 +90,14 @@ public class InputHandler implements InputProcessor {
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if (button == Input.Buttons.LEFT) {
             isDragging = false;
+            LOGGER.debug("Touch up: screenX={}, screenY={}", screenX, screenY);
         }
         return true;
     }
 
     @Override
     public boolean touchCancelled(int i, int i1, int i2, int i3) {
+        // Implement touchCancelled functionality if needed
         return false;
     }
 
@@ -105,10 +116,14 @@ public class InputHandler implements InputProcessor {
             lastY = screenY;
 
             camera.update();
+            LOGGER.debug("Touch dragged: deltaX={}, deltaY={}", deltaX, deltaY);
         }
         return true;
     }
 
     @Override
-    public boolean mouseMoved(int screenX, int screenY) { return false; }
+    public boolean mouseMoved(int screenX, int screenY) {
+        // Implement mouseMoved functionality if needed
+        return false;
+    }
 }

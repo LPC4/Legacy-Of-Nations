@@ -13,7 +13,7 @@ public abstract class BaseMap {
     protected Vector2 viewPosition;  // Camera center
     protected float zoom;
 
-    // Each map type will implement their own tile type
+    // Each map type implements their own tile type
     protected abstract static class BaseTile {
         protected Position position;
     }

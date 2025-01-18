@@ -23,7 +23,8 @@ public class SurfaceMap extends BaseMap {
     private final PerlinNoise moistureNoise;
     private final MainGame game;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     public static class SurfaceTile extends BaseTile {
         private TerrainType terrain;
         private ResourceNode resource;
@@ -58,19 +59,16 @@ public class SurfaceMap extends BaseMap {
 
         float tileSize = MapScale.SURFACE.getPixelsPerTile();
 
-        // Calculate visible range
         float leftX = camera.position.x - camera.viewportWidth / 2 * camera.zoom - tileSize;
         float rightX = camera.position.x + camera.viewportWidth / 2 * camera.zoom + tileSize;
         float bottomY = camera.position.y - camera.viewportHeight / 2 * camera.zoom - tileSize;
         float topY = camera.position.y + camera.viewportHeight / 2 * camera.zoom + tileSize;
 
-        // Convert to tile coordinates
         int startX = Math.max(0, (int) (leftX / tileSize));
         int endX = Math.min(width - 1, (int) (rightX / tileSize));
         int startY = Math.max(0, (int) (bottomY / tileSize));
         int endY = Math.min(height - 1, (int) (topY / tileSize));
 
-        // Render only visible tiles
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
                 SurfaceTile tile = tiles[x][y];
@@ -116,20 +114,16 @@ public class SurfaceMap extends BaseMap {
     private SurfaceTile generateTile(int x, int y) {
         double scale = 0.04;
 
-        // Generate base noise values
         double heightValue = generateHeight(x, y, scale);
         double moistureValue = generateMoisture(x, y, scale);
         double riverValue = generateRiver(x, y, scale);
 
-        // Normalize noise values
         heightValue = (heightValue + 1) / 2;
         moistureValue = (moistureValue + 1) / 2;
         riverValue = (riverValue + 1) / 2;
 
-        // Adjust height based on river influence
         heightValue = applyRiverEffect(heightValue, riverValue);
 
-        // Determine terrain type based on height and moisture
         TerrainType terrain = determineTerrainType((float) heightValue, (float) moistureValue);
 
         SurfaceTile tile = new SurfaceTile(new Position(x, y, MapScale.SURFACE), terrain);
@@ -153,7 +147,7 @@ public class SurfaceMap extends BaseMap {
 
     private double applyRiverEffect(double heightValue, double riverValue) {
         if (riverValue > 0.5) {
-            return heightValue - riverValue * 0.1; // Adjust the strength of the river effect here
+            return heightValue - riverValue * 0.1;
         }
         return heightValue;
     }
@@ -165,12 +159,10 @@ public class SurfaceMap extends BaseMap {
             if (moisture > 0.7f) return TerrainType.FOREST;
             else if (moisture > 0.4f) return TerrainType.PLAINS;
             else return TerrainType.DESERT;
-        }
-        else if (height < 0.7f) {
+        } else if (height < 0.7f) {
             if (moisture > 0.5f) return TerrainType.FOREST;
             else return TerrainType.HILLS;
-        }
-        else {
+        } else {
             return TerrainType.MOUNTAIN;
         }
     }

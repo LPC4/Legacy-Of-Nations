@@ -1,5 +1,6 @@
 package org.lpc.utility;
 
+import com.badlogic.gdx.graphics.Camera;
 import lombok.Getter;
 import lombok.Setter;
 import org.lpc.map.MapScale;
@@ -8,7 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Getter @Setter
+@Getter
+@Setter
 public class Position {
     private int gridX;    // Grid coordinates (tile position)
     private int gridY;
@@ -18,13 +20,11 @@ public class Position {
     public Position(int gridX, int gridY, MapScale scale) {
         this.gridX = gridX;
         this.gridY = gridY;
-
         this.pixelsPerTile = scale.getPixelsPerTile();
     }
 
     // Create from world coordinates
-    public static Position fromWorld(float worldX, float worldY, MapScale scale) {
-        // Convert world coordinates to grid coordinates
+    public static Position fromWorld(float worldX, float worldY, MapScale scale, Camera camera) {
         int gridX = (int) (worldX / scale.getPixelsPerTile());
         int gridY = (int) (worldY / scale.getPixelsPerTile());
         return new Position(gridX, gridY, scale);
@@ -39,17 +39,14 @@ public class Position {
 
     // Get distance to another position (in grid units)
     public int getDistanceTo(Position other) {
-        return Math.abs(this.gridX - other.gridX) +
-            Math.abs(this.gridY - other.gridY);
+        return Math.abs(this.gridX - other.gridX) + Math.abs(this.gridY - other.gridY);
     }
 
     // Get positions in range
     public List<Position> getPositionsInRange(int range, int mapWidth, int mapHeight, MapScale scale) {
         List<Position> positions = new ArrayList<>();
-        for (int x = Math.max(0, gridX - range);
-             x <= Math.min(mapWidth - 1, gridX + range); x++) {
-            for (int y = Math.max(0, gridY - range);
-                 y <= Math.min(mapHeight - 1, gridY + range); y++) {
+        for (int x = Math.max(0, gridX - range); x <= Math.min(mapWidth - 1, gridX + range); x++) {
+            for (int y = Math.max(0, gridY - range); y <= Math.min(mapHeight - 1, gridY + range); y++) {
                 Position pos = new Position(x, y, scale);
                 if (this.getDistanceTo(pos) <= range) {
                     positions.add(pos);
@@ -74,7 +71,6 @@ public class Position {
 
     @Override
     public String toString() {
-        return String.format("Position(grid:[%d,%d])",
-            gridX, gridY);
+        return String.format("Position(grid:[%d,%d])", gridX, gridY);
     }
 }

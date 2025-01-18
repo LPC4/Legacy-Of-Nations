@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -21,7 +20,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lpc.MainGame;
 
-import static org.lpc.utility.Constants.SKIN;
+import static org.lpc.utility.Constants.*;
 
 @Getter
 public class MenuScreen implements Screen {
@@ -42,22 +41,24 @@ public class MenuScreen implements Screen {
 
     @Override
     public void show() {
+        LOGGER.info("Menu screen shown");
         firstEscapePress = true;
         Gdx.input.setInputProcessor(stage);
 
         Texture backgroundTexture = new Texture("menu/background.png");
         Drawable backgroundDrawable = new TextureRegionDrawable(backgroundTexture);
 
-        Button startButton = new Button(SKIN);
+        Button startButton = new Button(DEFAULT_BUTTON_SKIN);
         startButton.add("Resume Game");
         startButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                LOGGER.info("Start button clicked");
                 game.setScreen(game.getGameScreen());
             }
         });
 
-        Button settingsButton = new Button(SKIN);
+        Button settingsButton = new Button(DEFAULT_BUTTON_SKIN);
         settingsButton.add("Settings");
         settingsButton.addListener(new ClickListener() {
             @Override
@@ -66,24 +67,24 @@ public class MenuScreen implements Screen {
             }
         });
 
-        Button exitButton = new Button(SKIN);
+        Button exitButton = new Button(DEFAULT_BUTTON_SKIN);
         exitButton.add("Exit");
         exitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                LOGGER.info("Exit button clicked");
                 Gdx.app.exit();
             }
         });
 
-        Table table = new Table(SKIN);
+        Table table = new Table(DEFAULT_BUTTON_SKIN);
         table.setBackground(backgroundDrawable);
         table.setFillParent(true);
         table.top().center();
-        float buttonWidth = 200; // Set a uniform width for all buttons
-        float buttonHeight = 40; // Set a uniform height for all buttons
-        table.add(startButton).width(buttonWidth).height(buttonHeight).padTop(20).row();
-        table.add(settingsButton).width(buttonWidth).height(buttonHeight).padTop(20).row();
-        table.add(exitButton).width(buttonWidth).height(buttonHeight).padTop(20).row();
+
+        table.add(startButton).width(MENU_BUTTON_WIDTH).height(MENU_BUTTON_HEIGHT).padTop(20).row();
+        table.add(settingsButton).width(MENU_BUTTON_WIDTH).height(MENU_BUTTON_HEIGHT).padTop(20).row();
+        table.add(exitButton).width(MENU_BUTTON_WIDTH).height(MENU_BUTTON_HEIGHT).padTop(20).row();
 
         Texture logoTexture = new Texture("menu/start/legacy_white.png");
         Image logoImage = new Image(new TextureRegionDrawable(logoTexture));
@@ -111,6 +112,7 @@ public class MenuScreen implements Screen {
     private void checkInput() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             if (firstEscapePress) {
+                LOGGER.info("Press escape again to exit");
                 firstEscapePress = false;
                 return;
             }
@@ -142,6 +144,6 @@ public class MenuScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
-        SKIN.dispose();
+        DEFAULT_BUTTON_SKIN.dispose();
     }
 }

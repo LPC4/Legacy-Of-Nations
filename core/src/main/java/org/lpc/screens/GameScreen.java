@@ -9,16 +9,23 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.lpc.GameStateManager;
 import org.lpc.MainGame;
 import org.lpc.map.BaseMap;
 
+import static org.lpc.utility.Constants.MAX_ZOOM;
+
 @Getter @Setter
 public class GameScreen implements Screen {
-    MainGame game;
+    private static final Logger LOGGER = LogManager.getLogger(GameScreen.class);
 
-    private SpriteBatch batch;
-    private ShapeRenderer shapeRenderer;
+    private final MainGame game;
+    private final SpriteBatch batch;
+    private final ShapeRenderer shapeRenderer;
     private final OrthographicCamera camera;
+    private final GameStateManager gameStateManager;
 
     public GameScreen(MainGame game) {
         this.game = game;
@@ -26,10 +33,21 @@ public class GameScreen implements Screen {
         this.shapeRenderer = new ShapeRenderer();
         this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.camera.setToOrtho(false);
+        this.gameStateManager = game.getGameStateManager();
+
+        setCameraToMapCenter();
+    }
+
+    private void setCameraToMapCenter() {
+        BaseMap map = gameStateManager.getMapSystem().getMap();
+        camera.position.set(map.getWidth() * 32 / 2f, map.getHeight() * 32 / 2f, 0);
+        camera.zoom = MAX_ZOOM / 2f;
+        camera.update();
     }
 
     @Override
     public void show() {
+        LOGGER.info("Game screen shown");
         Gdx.input.setInputProcessor(game.getInputHandler());
     }
 
@@ -41,9 +59,8 @@ public class GameScreen implements Screen {
         renderMap();
     }
 
-
     private void renderMap() {
-        BaseMap map = game.getGameStateManager().getMap();
+        BaseMap map = game.getGameStateManager().getMapSystem().getMap();
         map.render(shapeRenderer, batch);
     }
 
