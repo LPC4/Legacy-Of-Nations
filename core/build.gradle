@@ -2,19 +2,22 @@
 eclipse.project.name = appName + '-core'
 
 dependencies {
+  // GDX for rendering
   api "com.badlogicgames.ashley:ashley:$ashleyVersion"
   api "com.badlogicgames.box2dlights:box2dlights:$box2dlightsVersion"
   api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
   api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
   api "com.badlogicgames.gdx:gdx:$gdxVersion"
 
+  // Lombok for boilerplate code
   compileOnly 'org.projectlombok:lombok:1.18.30'
   annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
-  // Log4j2
+  // Log4j2 + JAnsi for logging
   api "org.apache.logging.log4j:log4j-api:$log4jVersion"
   api "org.apache.logging.log4j:log4j-core:$log4jVersion"
   api "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
+  implementation 'org.fusesource.jansi:jansi:1.18'
 
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"

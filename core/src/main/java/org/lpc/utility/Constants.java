@@ -2,13 +2,14 @@ package org.lpc.utility;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class Constants {
     // Camera
-    public static final float MIN_ZOOM      = 0.1f;
-    public static final float MAX_ZOOM      = 10f;
-    public static final float ZOOM_SPEED    = 0.5f;
+    public static final float MIN_ZOOM      = 0.5f;
+    public static final float MAX_ZOOM      = 9.0f;
+    public static final float ZOOM_SPEED    = 0.3f;
 
     // Terrain colors
     public static final Color WATER_COLOR       = new Color(0.0f, 0.2f, 0.4f, 1.0f); // Deep blue

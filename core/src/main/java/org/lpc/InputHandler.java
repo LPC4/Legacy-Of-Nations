@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +15,6 @@ public class InputHandler implements InputProcessor {
     private static final Logger LOGGER = LogManager.getLogger(InputHandler.class);
 
     private final MainGame game;
-
     private boolean isDragging;
     private int lastX;
     private int lastY;
@@ -29,17 +29,14 @@ public class InputHandler implements InputProcessor {
     public boolean scrolled(float amountX, float amountY) {
         OrthographicCamera camera = game.getGameScreen().getCamera();
 
-        // Store mouse position before zoom
         Vector3 mousePos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         Vector3 worldPos = camera.unproject(mousePos.cpy());
 
-        // Zoom in when scrolling up, out when scrolling down
         float newZoom = camera.zoom + amountY * ZOOM_SPEED;
-        camera.zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newZoom));
-
-        // Update camera matrix
+        camera.zoom = MathUtils.clamp(newZoom, MIN_ZOOM, MAX_ZOOM);
         camera.update();
         Vector3 newWorldPos = camera.unproject(mousePos);
+
         camera.position.add(worldPos.x - newWorldPos.x, worldPos.y - newWorldPos.y, 0);
 
         LOGGER.debug("Scrolled: amountX={}, amountY={}, newZoom={}", amountX, amountY, newZoom);

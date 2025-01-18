@@ -1,4 +1,4 @@
-package org.lpc.terrain;
+package org.lpc.map.terrain;
 
 public class ResourceNode {
 }

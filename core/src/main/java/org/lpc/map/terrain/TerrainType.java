@@ -1,4 +1,4 @@
-package org.lpc.terrain;
+package org.lpc.map.terrain;
 
 /**
  * Enum representing different types of terrain in the game.

@@ -14,6 +14,8 @@ import org.apache.logging.log4j.Logger;
 import org.lpc.GameStateManager;
 import org.lpc.MainGame;
 import org.lpc.map.BaseMap;
+import org.lpc.map.MapScale;
+import org.lpc.map.MapSystem;
 
 import static org.lpc.utility.Constants.MAX_ZOOM;
 
@@ -40,7 +42,8 @@ public class GameScreen implements Screen {
 
     private void setCameraToMapCenter() {
         BaseMap map = gameStateManager.getMapSystem().getMap();
-        camera.position.set(map.getWidth() * 32 / 2f, map.getHeight() * 32 / 2f, 0);
+        MapScale scale = gameStateManager.getMapSystem().getCurrentScale();
+        camera.position.set(map.getWidth() * scale.getPixelsPerTile() / 2f, map.getHeight() * scale.getPixelsPerTile() / 2f, 0);
         camera.zoom = MAX_ZOOM / 2f;
         camera.update();
     }

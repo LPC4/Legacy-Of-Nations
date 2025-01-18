@@ -16,7 +16,6 @@ public class Position {
     private int gridY;
     private int pixelsPerTile;
 
-    // Create from grid coordinates
     public Position(int gridX, int gridY, MapScale scale) {
         this.gridX = gridX;
         this.gridY = gridY;
@@ -30,19 +29,16 @@ public class Position {
         return new Position(gridX, gridY, scale);
     }
 
-    // Check if two positions are adjacent
     public boolean isAdjacentTo(Position other) {
         int dx = Math.abs(this.gridX - other.gridX);
         int dy = Math.abs(this.gridY - other.gridY);
         return (dx == 1 && dy == 0) || (dx == 0 && dy == 1);
     }
 
-    // Get distance to another position (in grid units)
     public int getDistanceTo(Position other) {
         return Math.abs(this.gridX - other.gridX) + Math.abs(this.gridY - other.gridY);
     }
 
-    // Get positions in range
     public List<Position> getPositionsInRange(int range, int mapWidth, int mapHeight, MapScale scale) {
         List<Position> positions = new ArrayList<>();
         for (int x = Math.max(0, gridX - range); x <= Math.min(mapWidth - 1, gridX + range); x++) {

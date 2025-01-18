@@ -9,9 +9,9 @@ import lombok.Setter;
 import org.lpc.MainGame;
 import org.lpc.map.BaseMap;
 import org.lpc.map.MapScale;
-import org.lpc.terrain.Building;
-import org.lpc.terrain.ResourceNode;
-import org.lpc.terrain.TerrainType;
+import org.lpc.map.terrain.Building;
+import org.lpc.map.terrain.ResourceNode;
+import org.lpc.map.terrain.TerrainType;
 import org.lpc.utility.Constants;
 import org.lpc.utility.PerlinNoise;
 import org.lpc.utility.Position;
@@ -73,6 +73,7 @@ public class SurfaceMap extends BaseMap {
             for (int y = startY; y <= endY; y++) {
                 SurfaceTile tile = tiles[x][y];
                 renderTile(shapeRenderer, tile, x, y);
+                //renderTileGrid(shapeRenderer, tile, x, y);
             }
         }
 
@@ -86,6 +87,20 @@ public class SurfaceMap extends BaseMap {
 
         shapeRenderer.setColor(getTerrainColor(tile.getTerrain()));
         shapeRenderer.rect(tileX, tileY, tileSize, tileSize);
+    }
+
+    private void renderTileGrid(ShapeRenderer shapeRenderer, SurfaceTile tile, int x, int y) {
+        float tileSize = MapScale.SURFACE.getPixelsPerTile();
+        float padding = 2f;
+        float tileX = x * tileSize + padding;
+        float tileY = y * tileSize + padding;
+        float innerTileSize = tileSize - (padding * 2);
+
+        shapeRenderer.setColor(new Color(0.2f, 0.2f, 0.2f, 0.3f));
+        shapeRenderer.rect(x * tileSize, y * tileSize, tileSize, tileSize);
+
+        shapeRenderer.setColor(getTerrainColor(tile.getTerrain()));
+        shapeRenderer.rect(tileX, tileY, innerTileSize, innerTileSize);
     }
 
     private Color getTerrainColor(TerrainType terrain) {

@@ -15,7 +15,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lpc.MainGame;
 
+import javax.swing.*;
+
+import static com.badlogic.gdx.Input.Keys.F11;
 import static com.badlogic.gdx.Input.Keys.SPACE;
+import static org.lpc.utility.Constants.WINDOW_HEIGHT;
+import static org.lpc.utility.Constants.WINDOW_WIDTH;
 
 public class StartScreen implements Screen {
     private static final Logger LOGGER = LogManager.getLogger(StartScreen.class);
@@ -72,12 +77,25 @@ public class StartScreen implements Screen {
         Gdx.gl.glClearColor(0.15f, 0.15f, 0.2f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if (Gdx.input.isKeyJustPressed(SPACE)) {
-            game.setScreen(game.getGameScreen());
-        }
+        checkInput();
 
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
+    }
+
+    private void checkInput() {
+        if (Gdx.input.isKeyJustPressed(SPACE)) {
+            game.setScreen(game.getGameScreen());
+        }
+        if (Gdx.input.isKeyJustPressed(F11)) {
+            if (Gdx.graphics.isFullscreen()) {
+                Gdx.graphics.setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT);
+                LOGGER.info("Switched to windowed mode");
+            } else {
+                Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+                LOGGER.info("Switched to fullscreen mode");
+            }
+        }
     }
 
     @Override

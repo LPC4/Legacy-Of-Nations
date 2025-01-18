@@ -20,6 +20,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lpc.MainGame;
 
+import static com.badlogic.gdx.Input.Keys.F11;
 import static org.lpc.utility.Constants.*;
 
 @Getter
@@ -118,6 +119,15 @@ public class MenuScreen implements Screen {
             }
             game.setScreen(game.getGameScreen());
             LOGGER.info("Escape key pressed");
+        }
+        if (Gdx.input.isKeyJustPressed(F11)) {
+            if (Gdx.graphics.isFullscreen()) {
+                Gdx.graphics.setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT);
+                LOGGER.info("Switched to windowed mode");
+            } else {
+                Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+                LOGGER.info("Switched to fullscreen mode");
+            }
         }
     }
 

@@ -1,9 +1,14 @@
 package org.lpc.map;
 
 import com.badlogic.gdx.Game;
+import lombok.Getter;
 import org.lpc.MainGame;
 import org.lpc.map.maps.SurfaceMap;
 
+import static org.lpc.utility.Constants.SURFACE_MAP_HEIGHT;
+import static org.lpc.utility.Constants.SURFACE_MAP_WIDTH;
+
+@Getter
 public class MapSystem {
     private final SurfaceMap surfaceMap;       // Most detailed
 
@@ -15,7 +20,7 @@ public class MapSystem {
 
     public MapSystem(MainGame game) {
         this.currentScale = MapScale.SURFACE;
-        this.surfaceMap = new SurfaceMap(200, 200, game);
+        this.surfaceMap = new SurfaceMap(SURFACE_MAP_WIDTH, SURFACE_MAP_HEIGHT, game);
     }
 
     public void update() {

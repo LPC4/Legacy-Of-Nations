@@ -1,13 +1,19 @@
 package org.lpc;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.spi.LoggerAdapter;
 import org.lpc.screens.GameScreen;
 import org.lpc.screens.MenuScreen;
 import org.lpc.screens.StartScreen;
+
+import java.io.File;
+import java.util.Objects;
 
 @Getter
 public class MainGame extends Game {
@@ -29,9 +35,10 @@ public class MainGame extends Game {
         this.startScreen = new StartScreen(this);
         this.menuScreen = new MenuScreen(this);
         this.inputHandler = new InputHandler(this);
-        this.accumulator = 0;
+        this.accumulator = 0f;
 
         setScreen(startScreen);
+
         LOGGER.info("Game created and set to StartScreen");
     }
 
@@ -60,6 +67,23 @@ public class MainGame extends Game {
         startScreen.dispose();
         menuScreen.dispose();
 
-        LOGGER.info("Game disposed");
+        LOGGER.info("Game disposed, exiting");
+
+        Gdx.app.exit();
+
+        LogManager.shutdown();
+        deleteLogFiles();
+    }
+
+    private void deleteLogFiles() {
+        File logDir = new File("logs");
+        if (!logDir.exists()) return;
+
+        for (File file : Objects.requireNonNull(logDir.listFiles())) {
+            if (!file.getName().endsWith(".log")) continue;
+
+            if (!file.delete())
+                throw new RuntimeException("Failed to delete log file: " + file.getName());
+        }
     }
 }
