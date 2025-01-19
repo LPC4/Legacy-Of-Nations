@@ -2,6 +2,7 @@ package org.lpc.map.maps;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -59,6 +60,9 @@ public class SurfaceMapRenderer implements IMapRenderer {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
         float tileSize = MapScale.SURFACE.getPixelsPerTile();
 
         for (int x = startX; x <= endX; x++) {
@@ -67,6 +71,8 @@ public class SurfaceMapRenderer implements IMapRenderer {
                 renderTile(shapeRenderer, tile, x, y, tileSize);
             }
         }
+
+        Gdx.gl.glDisable(GL20.GL_BLEND);
 
         shapeRenderer.end();
     }
@@ -87,6 +93,11 @@ public class SurfaceMapRenderer implements IMapRenderer {
 
         shapeRenderer.setColor(finalColor);
         shapeRenderer.rect(tileX, tileY, tileSize, tileSize);
+
+        if (tile.getOwner() != null) {
+            shapeRenderer.setColor(tile.getOwner().getColor());
+            shapeRenderer.rect(tileX, tileY, tileSize, tileSize);
+        }
     }
 
     private void renderVegetation(List<Sprite> vegetation, float leftX, float rightX,

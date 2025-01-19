@@ -31,11 +31,21 @@ public class ResourceNode {
         return resources.getOrDefault(type, 0) <= 0;
     }
 
-    public void harvestResource(ResourceType type, int amount) {
+    public int harvestResource(ResourceType type, int amount) {
         if (amount > 0 && resources.getOrDefault(type, 0) >= amount) {
             resources.put(type, resources.get(type) - amount);
+            return amount;
         } else {
             throw new IllegalArgumentException("Invalid amount to harvest");
+        }
+    }
+
+    public int replenishResource(ResourceType type, int amount) {
+        if (amount > 0) {
+            resources.put(type, resources.get(type) + amount);
+            return amount;
+        } else {
+            throw new IllegalArgumentException("Invalid amount to replenish");
         }
     }
 }

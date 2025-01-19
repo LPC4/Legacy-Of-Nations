@@ -6,15 +6,18 @@ import lombok.Getter;
 import lombok.Setter;
 import org.lpc.MainGame;
 import org.lpc.map.BaseMap;
+import org.lpc.map.MapScale;
 import org.lpc.terrain.TerrainType;
 import org.lpc.terrain.buildings.BaseBuilding;
 import org.lpc.terrain.resources.ResourceNode;
+import org.lpc.terrain.resources.ResourceType;
 import org.lpc.utility.Position;
 
 @Getter
 @Setter
 public class SurfaceMap extends BaseMap {
     //private final VegetationManager vegetationManager;
+    private final MapScale scale = MapScale.SURFACE;
 
     @Getter
     @Setter
@@ -29,7 +32,7 @@ public class SurfaceMap extends BaseMap {
         private float vegetationDensity;
 
         public SurfaceTile(Position pos, TerrainType terrain, float moisture, float height) {
-            super(pos);
+            super(pos, MapScale.SURFACE);
             this.terrain = terrain;
             this.explored = false;
             this.resources = new ResourceNode();
@@ -37,6 +40,10 @@ public class SurfaceMap extends BaseMap {
             this.height = height;
             this.movementModifier = TerrainType.getMovementModifier(terrain);
             this.vegetationDensity = TerrainType.calculateVegetationDensity(terrain, moisture, height);
+        }
+
+        public int harvest(ResourceType type, int amount) {
+            return resources.harvestResource(type, amount);
         }
     }
 
@@ -55,5 +62,9 @@ public class SurfaceMap extends BaseMap {
     @Override
     public void update() {
         // Update logic if needed
+    }
+
+    public SurfaceTile getTile(int x, int y) {
+        return (SurfaceTile) tiles[x][y];
     }
 }

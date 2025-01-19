@@ -22,4 +22,8 @@ dependencies {
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
   }
+
+  // Javatuples for tuples
+  implementation 'org.javatuples:javatuples:1.2'
 }
+

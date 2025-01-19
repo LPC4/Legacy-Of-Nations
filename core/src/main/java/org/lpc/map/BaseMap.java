@@ -4,8 +4,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import lombok.Getter;
 import lombok.Setter;
+import org.javatuples.Pair;
 import org.lpc.MainGame;
+import org.lpc.civilisation.Civilisation;
 import org.lpc.map.maps.SurfaceMapGenerator;
+import org.lpc.terrain.resources.ResourceType;
 import org.lpc.utility.Position;
 
 @Getter
@@ -22,11 +25,17 @@ public abstract class BaseMap {
     @Getter
     @Setter
     public abstract static class BaseTile {
-        protected Position position;
+        protected final Position position;
+        protected final MapScale scale;
+        protected Civilisation owner;
 
-        public BaseTile(Position position) {
+        public BaseTile(Position position, MapScale scale) {
             this.position = position;
+            this.scale = scale;
+            this.owner = null;
         }
+
+        public abstract int harvest(ResourceType type, int amount);
     }
 
     public BaseMap(int width, int height, MainGame game, IMapGenerator mapGenerator, IMapRenderer renderer, BaseTile[][] tiles) {
