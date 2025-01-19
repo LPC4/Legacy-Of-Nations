@@ -2,9 +2,10 @@ package org.lpc.map;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector2;
 import lombok.Getter;
 import lombok.Setter;
+import org.lpc.MainGame;
+import org.lpc.map.maps.SurfaceMapGenerator;
 import org.lpc.utility.Position;
 
 @Getter
@@ -12,20 +13,42 @@ import org.lpc.utility.Position;
 public abstract class BaseMap {
     protected int width;
     protected int height;
+    protected final IMapGenerator mapGenerator;
+    protected final IMapRenderer renderer;
+    protected final BaseTile[][] tiles;
+    protected final MainGame game;
 
     // Each map type implements their own tile type
     @Getter
     @Setter
-    protected abstract static class BaseTile {
+    public abstract static class BaseTile {
         protected Position position;
 
-        public Vector2 getVector2() {
-            return new Vector2(position.getGridX(), position.getGridY());
+        public BaseTile(Position position) {
+            this.position = position;
         }
     }
 
-    public abstract void render(ShapeRenderer shapeRenderer, SpriteBatch batch);
+    public BaseMap(int width, int height, MainGame game, IMapGenerator mapGenerator, IMapRenderer renderer, BaseTile[][] tiles) {
+        this.width = width;
+        this.height = height;
+        this.mapGenerator = mapGenerator;
+        this.renderer = renderer;
+        this.game = game;
+        this.tiles = tiles;
+
+        generateMap();
+    }
+
     public abstract void update();
-    protected abstract void generateMap();
+
+    public void render(ShapeRenderer shapeRenderer, SpriteBatch batch) {
+        renderer.render(tiles, shapeRenderer, batch);
+    }
+
+    protected void generateMap() {
+        mapGenerator.generateTerrain(tiles, width, height);
+        mapGenerator.generateResources(tiles);
+    }
 }
 

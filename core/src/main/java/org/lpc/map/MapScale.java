@@ -9,9 +9,9 @@ import lombok.Getter;
 @Getter
 public enum MapScale {
     /**
-     * Surface level scale: 64 pixels per tile.
+     * Surface level scale: 128 pixels per tile.
      */
-    SURFACE(1, 64),
+    SURFACE(1, 128),
 
     /**
      * Regional level scale: 64 pixels per grouped tile.
@@ -24,7 +24,7 @@ public enum MapScale {
     CONTINENTAL(16, 64),
 
     /**
-     * Planetary level scale: 64 pixels per large region.
+     * Planetary level scale: 64 pixels per planet tile.
      */
     PLANETARY(64, 64);
 

@@ -63,14 +63,14 @@ public enum TerrainType {
 
     public static float calculateVegetationDensity(TerrainType terrain, float moisture, float height) {
         switch (terrain) {
-            case FOREST: return MathUtils.clamp(moisture * 0.8f - height * 0.2f, 0.4f, 1.0f);
+            case FOREST: return MathUtils.clamp(moisture * 0.9f - height * 0.1f, 0.4f, 1.0f);
             case PLAINS: return MathUtils.clamp(moisture * 0.5f - height * 0.2f, 0.2f, 0.7f);
-            case DESERT: return MathUtils.clamp(moisture * 0.2f - height * 0.2f, 0.0f, 0.2f);
+            case DESERT: return MathUtils.clamp(height * 0.05f, 0.0f, 0.3f);
             default: return 0.0f;
         }
     }
 
     public static boolean hasVegetation(TerrainType terrain) {
-        return terrain == FOREST || terrain == PLAINS || terrain == HILLS;
+        return terrain == FOREST || terrain == PLAINS || terrain == HILLS || terrain == DESERT;
     }
 }

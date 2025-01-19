@@ -28,8 +28,8 @@ public class MenuScreen implements Screen {
     private static final Logger LOGGER = LogManager.getLogger(MenuScreen.class);
 
     private final MainGame game;
-    private Stage stage;
-    private Viewport viewport;
+    private final Stage stage;
+    private final Viewport viewport;
 
     private boolean firstEscapePress = true;
 
@@ -177,6 +177,7 @@ public class MenuScreen implements Screen {
 
     @Override
     public void dispose() {
+        LOGGER.info("Menu screen disposed");
         stage.dispose();
         DEFAULT_BUTTON_SKIN.dispose();
     }

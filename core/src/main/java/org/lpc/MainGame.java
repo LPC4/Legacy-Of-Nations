@@ -3,6 +3,7 @@ package org.lpc;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
@@ -30,19 +31,20 @@ public class MainGame extends Game {
     ///  - Add audio to the game (low hum in main menu, music in game)
     ///  - Add movement to the main menu (twinkling stars, moving clouds, starship flying by)
     ///  - Good logo for the game
+    ///  - Fix map system
 
     @Override
     public void create() {
         LOGGER.info("Initializing game");
 
-        this.startScreen = new StartScreen(this);
-        setScreen(startScreen);
-
         this.gameStateManager = new GameStateManager(this);
-        this.gameScreen = new GameScreen(this);
-        this.menuScreen = new MenuScreen(this);
         this.inputHandler = new InputHandler(this);
         this.accumulator = 0f;
+
+        this.gameScreen = new GameScreen(this);
+        this.menuScreen = new MenuScreen(this);
+        this.startScreen = new StartScreen(this);
+        setScreen(startScreen);
 
         LOGGER.info("Game created and set to StartScreen");
     }
