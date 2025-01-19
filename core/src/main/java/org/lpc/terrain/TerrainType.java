@@ -1,4 +1,4 @@
-package org.lpc.map.terrain;
+package org.lpc.terrain;
 
 /**
  * Enum representing different types of terrain in the game.
@@ -37,5 +37,25 @@ public enum TerrainType {
     /**
      * Mountain terrain, high and rugged elevation.
      */
-    MOUNTAIN
+    MOUNTAIN;
+
+    public static float getMovementModifier(TerrainType terrain) {
+        switch (terrain) {
+            case WATER:
+                return 0.0f;
+            case BEACH:
+                return 0.7f;
+            case FOREST:
+            case DESERT:
+                return 0.8f;
+            case PLAINS:
+                return 1.0f;
+            case HILLS:
+                return 0.6f;
+            case MOUNTAIN:
+                return 0.4f;
+            default:
+                throw new IllegalArgumentException("Invalid terrain type: " + terrain);
+        }
+    }
 }

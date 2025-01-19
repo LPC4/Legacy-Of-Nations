@@ -46,12 +46,26 @@ public class MenuScreen implements Screen {
         firstEscapePress = true;
         Gdx.input.setInputProcessor(stage);
 
+        setupBackground();
+        setupButtons();
+        setupLogo();
+    }
+
+    private void setupBackground() {
         Texture backgroundTexture = new Texture("menu/background.png");
         Drawable backgroundDrawable = new TextureRegionDrawable(backgroundTexture);
+        Table backgroundTable = new Table();
+        backgroundTable.setBackground(backgroundDrawable);
+        backgroundTable.setFillParent(true);
+        stage.addActor(backgroundTable);
+    }
 
-        Button startButton = new Button(DEFAULT_BUTTON_SKIN);
-        startButton.add("Resume Game");
-        startButton.addListener(new ClickListener() {
+    private void setupButtons() {
+        Table table = new Table(DEFAULT_BUTTON_SKIN);
+        table.top().center();
+        table.setFillParent(true);
+
+        Button startButton = createButton("Resume Game", new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 LOGGER.info("Start button clicked");
@@ -59,18 +73,14 @@ public class MenuScreen implements Screen {
             }
         });
 
-        Button settingsButton = new Button(DEFAULT_BUTTON_SKIN);
-        settingsButton.add("Settings");
-        settingsButton.addListener(new ClickListener() {
+        Button settingsButton = createButton("Settings", new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 LOGGER.info("Settings button clicked");
             }
         });
 
-        Button exitButton = new Button(DEFAULT_BUTTON_SKIN);
-        exitButton.add("Exit");
-        exitButton.addListener(new ClickListener() {
+        Button exitButton = createButton("Exit", new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 LOGGER.info("Exit button clicked");
@@ -78,57 +88,71 @@ public class MenuScreen implements Screen {
             }
         });
 
-        Table table = new Table(DEFAULT_BUTTON_SKIN);
-        table.setBackground(backgroundDrawable);
-        table.setFillParent(true);
-        table.top().center();
-
         table.add(startButton).width(MENU_BUTTON_WIDTH).height(MENU_BUTTON_HEIGHT).padTop(20).row();
         table.add(settingsButton).width(MENU_BUTTON_WIDTH).height(MENU_BUTTON_HEIGHT).padTop(20).row();
         table.add(exitButton).width(MENU_BUTTON_WIDTH).height(MENU_BUTTON_HEIGHT).padTop(20).row();
 
+        stage.addActor(table);
+    }
+
+
+    private Button createButton(String text, ClickListener clickListener) {
+        Button button = new Button(DEFAULT_BUTTON_SKIN);
+        button.add(text);
+        button.addListener(clickListener);
+        return button;
+    }
+
+    private void setupLogo() {
         Texture logoTexture = new Texture("menu/start/legacy_white.png");
         Image logoImage = new Image(new TextureRegionDrawable(logoTexture));
-
         Table logoTable = new Table();
         logoTable.top().left();
         logoTable.setFillParent(true);
         logoTable.add(logoImage).height(20).width(160).padTop(10).padLeft(10);
-
-        stage.addActor(table);
         stage.addActor(logoTable);
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0.15f, 0.15f, 0.2f, 1f);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+        clearScreen();
         checkInput();
-
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
     }
 
+    private void clearScreen() {
+        Gdx.gl.glClearColor(0.15f, 0.15f, 0.2f, 1f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    }
+
     private void checkInput() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            if (firstEscapePress) {
-                LOGGER.info("Press escape again to exit");
-                firstEscapePress = false;
-                return;
-            }
-            game.setScreen(game.getGameScreen());
-            LOGGER.info("Escape key pressed");
+            toggleClose();
         }
         if (Gdx.input.isKeyJustPressed(F11)) {
-            if (Gdx.graphics.isFullscreen()) {
-                Gdx.graphics.setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT);
-                LOGGER.info("Switched to windowed mode");
-            } else {
-                Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
-                LOGGER.info("Switched to fullscreen mode");
-            }
+            toggleFullscreen();
         }
+    }
+
+    private void toggleFullscreen() {
+        if (Gdx.graphics.isFullscreen()) {
+            Gdx.graphics.setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT);
+            LOGGER.info("Switched to windowed mode");
+        } else {
+            Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+            LOGGER.info("Switched to fullscreen mode");
+        }
+    }
+
+    private void toggleClose() {
+        if (firstEscapePress) {
+            LOGGER.info("Press escape again to exit");
+            firstEscapePress = false;
+            return;
+        }
+        game.setScreen(game.getGameScreen());
+        LOGGER.info("Escape key pressed");
     }
 
     @Override

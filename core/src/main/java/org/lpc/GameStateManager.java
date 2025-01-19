@@ -13,14 +13,13 @@ import java.io.Serializable;
 @Getter
 public class GameStateManager implements Serializable {
     private static final long serialVersionUID = 1L;
-
     private transient Logger LOGGER = LogManager.getLogger(GameStateManager.class);
+
     private MapSystem mapSystem;
 
     public GameStateManager(MainGame game) {
         LOGGER.info("Initializing GameStateManager");
         this.mapSystem = new MapSystem(game);
-        LOGGER.info("SurfaceMap created with dimensions: {}x{}", mapSystem.getMap().getWidth(), mapSystem.getMap().getHeight());
     }
 
     public void update() {

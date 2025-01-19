@@ -10,7 +10,6 @@ import org.lpc.utility.Position;
 public abstract class BaseMap {
     protected int width;
     protected int height;
-    protected Vector2 viewPosition;  // Camera center
     protected float zoom;
 
     // Each map type implements their own tile type

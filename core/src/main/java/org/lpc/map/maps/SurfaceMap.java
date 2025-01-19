@@ -4,17 +4,21 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.lpc.MainGame;
 import org.lpc.map.BaseMap;
 import org.lpc.map.MapScale;
-import org.lpc.map.terrain.Building;
-import org.lpc.map.terrain.ResourceNode;
-import org.lpc.map.terrain.TerrainType;
+import org.lpc.terrain.buildings.BaseBuilding;
+import org.lpc.terrain.resources.ResourceNode;
+import org.lpc.terrain.resources.ResourceType;
+import org.lpc.terrain.TerrainType;
 import org.lpc.utility.Constants;
 import org.lpc.utility.PerlinNoise;
 import org.lpc.utility.Position;
+
+import java.util.Random;
 
 @Getter
 public class SurfaceMap extends BaseMap {
@@ -27,16 +31,21 @@ public class SurfaceMap extends BaseMap {
     @Setter
     public static class SurfaceTile extends BaseTile {
         private TerrainType terrain;
-        private ResourceNode resource;
-        private Building building;
+        private ResourceNode resources;
+        private BaseBuilding building;
         private boolean explored;
         private float moisture;
         private float height;
+        private float movementModifier;
 
-        public SurfaceTile(Position pos, TerrainType terrain) {
+        public SurfaceTile(Position pos, TerrainType terrain, float moisture, float height) {
             this.position = pos;
             this.terrain = terrain;
             this.explored = false;
+            this.resources = new ResourceNode();
+            this.moisture = moisture;
+            this.height = height;
+            this.movementModifier = TerrainType.getMovementModifier(terrain);
         }
     }
 
@@ -48,72 +57,75 @@ public class SurfaceMap extends BaseMap {
         this.moistureNoise = new PerlinNoise();
         this.game = game;
         generateMap();
+        generateResources();
     }
 
-    @Override
-    public void render(ShapeRenderer shapeRenderer, SpriteBatch batch) {
-        OrthographicCamera camera = game.getGameScreen().getCamera();
-        camera.update();
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
-        float tileSize = MapScale.SURFACE.getPixelsPerTile();
-
-        float leftX = camera.position.x - camera.viewportWidth / 2 * camera.zoom - tileSize;
-        float rightX = camera.position.x + camera.viewportWidth / 2 * camera.zoom + tileSize;
-        float bottomY = camera.position.y - camera.viewportHeight / 2 * camera.zoom - tileSize;
-        float topY = camera.position.y + camera.viewportHeight / 2 * camera.zoom + tileSize;
-
-        int startX = Math.max(0, (int) (leftX / tileSize));
-        int endX = Math.min(width - 1, (int) (rightX / tileSize));
-        int startY = Math.max(0, (int) (bottomY / tileSize));
-        int endY = Math.min(height - 1, (int) (topY / tileSize));
-
-        for (int x = startX; x <= endX; x++) {
-            for (int y = startY; y <= endY; y++) {
+    private void generateResources() {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
                 SurfaceTile tile = tiles[x][y];
-                renderTile(shapeRenderer, tile, x, y);
-                //renderTileGrid(shapeRenderer, tile, x, y);
+                generateResource(tile);
             }
         }
-
-        shapeRenderer.end();
     }
 
-    private void renderTile(ShapeRenderer shapeRenderer, SurfaceTile tile, int x, int y) {
-        float tileSize = MapScale.SURFACE.getPixelsPerTile();
-        float tileX = x * tileSize;
-        float tileY = y * tileSize;
+    private void generateResource(SurfaceTile tile) {
+        if (tile == null) throw new IllegalArgumentException("Tile cannot be null");
 
-        shapeRenderer.setColor(getTerrainColor(tile.getTerrain()));
-        shapeRenderer.rect(tileX, tileY, tileSize, tileSize);
-    }
+        TerrainType terrain = tile.getTerrain();
 
-    private void renderTileGrid(ShapeRenderer shapeRenderer, SurfaceTile tile, int x, int y) {
-        float tileSize = MapScale.SURFACE.getPixelsPerTile();
-        float padding = 2f;
-        float tileX = x * tileSize + padding;
-        float tileY = y * tileSize + padding;
-        float innerTileSize = tileSize - (padding * 2);
+        float moisture = tile.getMoisture() * 2;
+        float height = tile.getHeight() * 2;
 
-        shapeRenderer.setColor(new Color(0.2f, 0.2f, 0.2f, 0.3f));
-        shapeRenderer.rect(x * tileSize, y * tileSize, tileSize, tileSize);
-
-        shapeRenderer.setColor(getTerrainColor(tile.getTerrain()));
-        shapeRenderer.rect(tileX, tileY, innerTileSize, innerTileSize);
-    }
-
-    private Color getTerrainColor(TerrainType terrain) {
         switch (terrain) {
-            case WATER: return Constants.WATER_COLOR;
-            case BEACH: return Constants.BEACH_COLOR;
-            case DESERT: return Constants.DESERT_COLOR;
-            case FOREST: return Constants.FOREST_COLOR;
-            case HILLS: return Constants.HILLS_COLOR;
-            case MOUNTAIN: return Constants.MOUNTAIN_COLOR;
-            case PLAINS: return Constants.PLAINS_COLOR;
-            default: return Color.WHITE;
+            case WATER:
+                generateResource(tile, ResourceType.FOOD, 40, 100, moisture);
+                break;
+            case BEACH:
+                generateResource(tile, ResourceType.FOOD, 20, 40, moisture);
+                generateResource(tile, ResourceType.STONE, 0, 50, height);
+                generateResource(tile, ResourceType.IRON, 0, 40, height);
+                break;
+            case FOREST:
+                generateResource(tile, ResourceType.FOOD, 50, 100, moisture);
+                generateResource(tile, ResourceType.WOOD, 40, 80, height);
+                generateResource(tile, ResourceType.STONE, 0, 40, height);
+                generateResource(tile, ResourceType.IRON, 0, 20, height);
+                break;
+            case PLAINS:
+                generateResource(tile, ResourceType.FOOD, 40, 80, moisture);
+                generateResource(tile, ResourceType.WOOD, 10, 20, height);
+                generateResource(tile, ResourceType.STONE, 0, 40, height);
+                generateResource(tile, ResourceType.IRON, 0, 20, height);
+                break;
+            case DESERT:
+                generateResource(tile, ResourceType.FOOD, 3, 30, moisture);
+                generateResource(tile, ResourceType.GOLD, 0, 3, height / 10);
+                generateResource(tile, ResourceType.IRON, 0, 10, height);
+                break;
+            case HILLS:
+                generateResource(tile, ResourceType.FOOD, 20, 40, moisture);
+                generateResource(tile, ResourceType.WOOD, 10, 20, height);
+                generateResource(tile, ResourceType.STONE, 20, 80, height);
+                generateResource(tile, ResourceType.IRON, 10, 30, height);
+                break;
+            case MOUNTAIN:
+                generateResource(tile, ResourceType.FOOD, 10, 20, moisture);
+                generateResource(tile, ResourceType.STONE, 40, 100, height);
+                generateResource(tile, ResourceType.IRON, 20, 60, height);
+                break;
         }
+    }
+
+    private void generateResource(SurfaceTile tile, ResourceType type, int min, int max, float modifier) {
+        Random random = new Random();
+        int quantity = random.nextInt(max - min) + min;
+
+        if (modifier > 0)
+            quantity = (int) (quantity * modifier);
+
+        quantity = MathUtils.clamp(quantity, min, max);
+        tile.getResources().addResource(type, quantity);
     }
 
     @Override
@@ -141,11 +153,7 @@ public class SurfaceMap extends BaseMap {
 
         TerrainType terrain = determineTerrainType((float) heightValue, (float) moistureValue);
 
-        SurfaceTile tile = new SurfaceTile(new Position(x, y, MapScale.SURFACE), terrain);
-        tile.setMoisture((float) moistureValue);
-        tile.setHeight((float) heightValue);
-
-        return tile;
+        return new SurfaceTile(new Position(x, y, MapScale.SURFACE), terrain, (float) moistureValue, (float) heightValue);
     }
 
     private double generateHeight(int x, int y, double scale) {
@@ -179,6 +187,126 @@ public class SurfaceMap extends BaseMap {
             else return TerrainType.HILLS;
         } else {
             return TerrainType.MOUNTAIN;
+        }
+    }
+
+    @Override
+    public void render(ShapeRenderer shapeRenderer, SpriteBatch batch) {
+        OrthographicCamera camera = game.getGameScreen().getCamera();
+        camera.update();
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        float tileSize = MapScale.SURFACE.getPixelsPerTile();
+
+        float leftX = camera.position.x - camera.viewportWidth / 2 * camera.zoom - tileSize;
+        float rightX = camera.position.x + camera.viewportWidth / 2 * camera.zoom + tileSize;
+        float bottomY = camera.position.y - camera.viewportHeight / 2 * camera.zoom - tileSize;
+        float topY = camera.position.y + camera.viewportHeight / 2 * camera.zoom + tileSize;
+
+        int startX = Math.max(0, (int) (leftX / tileSize));
+        int endX = Math.min(width - 1, (int) (rightX / tileSize));
+        int startY = Math.max(0, (int) (bottomY / tileSize));
+        int endY = Math.min(height - 1, (int) (topY / tileSize));
+
+        for (int x = startX; x <= endX; x++) {
+            for (int y = startY; y <= endY; y++) {
+                SurfaceTile tile = tiles[x][y];
+                renderTile(shapeRenderer, tile, x, y);
+                //renderTileGrid(shapeRenderer, tile, x, y);
+                //renderResources(shapeRenderer, tile, x, y);
+            }
+        }
+
+        shapeRenderer.end();
+    }
+
+    private void renderTile(ShapeRenderer shapeRenderer, SurfaceTile tile, int x, int y) {
+        float tileSize = MapScale.SURFACE.getPixelsPerTile();
+        float tileX = x * tileSize;
+        float tileY = y * tileSize;
+
+        shapeRenderer.setColor(getTerrainColor(tile.getTerrain()));
+        shapeRenderer.rect(tileX, tileY, tileSize, tileSize);
+    }
+
+    private void renderTileGrid(ShapeRenderer shapeRenderer, SurfaceTile tile, int x, int y) {
+        float tileSize = MapScale.SURFACE.getPixelsPerTile();
+        float padding = 2f;
+        float tileX = x * tileSize + padding;
+        float tileY = y * tileSize + padding;
+        float innerTileSize = tileSize - (padding * 2);
+
+        shapeRenderer.setColor(new Color(0.2f, 0.2f, 0.2f, 0.3f));
+        shapeRenderer.rect(x * tileSize, y * tileSize, tileSize, tileSize);
+
+        shapeRenderer.setColor(getTerrainColor(tile.getTerrain()));
+        shapeRenderer.rect(tileX, tileY, innerTileSize, innerTileSize);
+    }
+
+    private void renderResources(ShapeRenderer shapeRenderer, SurfaceTile tile, int x, int y) {
+        float tileSize = MapScale.SURFACE.getPixelsPerTile();
+        float padding = 2f;
+        float tileX = x * tileSize + padding;
+        float tileY = y * tileSize + padding;
+        float innerTileSize = tileSize - (padding * 2);
+
+        // Render tile background and terrain
+        shapeRenderer.setColor(new Color(0.2f, 0.2f, 0.2f, 0.3f));
+        shapeRenderer.rect(x * tileSize, y * tileSize, tileSize, tileSize);
+
+        shapeRenderer.setColor(getTerrainColor(tile.getTerrain()));
+        shapeRenderer.rect(tileX, tileY, innerTileSize, innerTileSize);
+
+        renderResourceDots(shapeRenderer, tile, tileX, tileY, innerTileSize);
+    }
+
+    private void renderResourceDots(ShapeRenderer shapeRenderer, SurfaceTile tile, float tileX, float tileY, float innerTileSize) {
+        int resourceSize = 4;
+        float resourcePadding = 4f;
+        float resourceX = tileX + resourcePadding;
+        float resourceY = tileY + resourcePadding;
+
+        for (ResourceType type : ResourceType.values()) {
+            int quantity = tile.getResources().getResourceQuantity(type);
+            int dots = (quantity + 9) / 10; // Always render at least 1 dot
+
+            if (quantity == 0) continue;
+
+            Color color = getResourceColor(type);
+            shapeRenderer.setColor(color);
+            for (int i = 0; i < dots; i++) {
+                shapeRenderer.circle(resourceX, resourceY, resourceSize);
+                resourceX += resourceSize + resourcePadding;
+                if (resourceX > tileX + innerTileSize) {
+                    resourceX = tileX + resourcePadding;
+                    resourceY += resourceSize + resourcePadding;
+                }
+            }
+        }
+    }
+
+    private Color getResourceColor(ResourceType type) {
+        switch (type) {
+            case FOOD: return Constants.FOOD_COLOR;
+            case WOOD: return Constants.WOOD_COLOR;
+            case STONE: return Constants.STONE_COLOR;
+            case IRON: return Constants.IRON_COLOR;
+            case GOLD: return Constants.GOLD_COLOR;
+            default: return Color.WHITE;
+        }
+    }
+
+    private Color getTerrainColor(TerrainType terrain) {
+        switch (terrain) {
+            case WATER: return Constants.WATER_COLOR;
+            case BEACH: return Constants.BEACH_COLOR;
+            case DESERT: return Constants.DESERT_COLOR;
+            case FOREST: return Constants.FOREST_COLOR;
+            case HILLS: return Constants.HILLS_COLOR;
+            case MOUNTAIN: return Constants.MOUNTAIN_COLOR;
+            case PLAINS: return Constants.PLAINS_COLOR;
+            default: return Color.WHITE;
         }
     }
 

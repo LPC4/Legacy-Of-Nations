@@ -20,6 +20,13 @@ public class Constants {
     public static final Color MOUNTAIN_COLOR    = new Color(0.5f, 0.5f, 0.5f, 1.0f); // Neutral gray
     public static final Color PLAINS_COLOR      = new Color(0.3f, 0.5f, 0.2f, 1.0f); // Olive green
 
+    // Resource colors
+    public static final Color FOOD_COLOR       = new Color(0.0f, 0.8f, 0.0f, 1.0f); // Bright green
+    public static final Color GOLD_COLOR       = new Color(1.0f, 0.8f, 0.0f, 1.0f); // Bright yellow
+    public static final Color IRON_COLOR       = new Color(0.8f, 0.8f, 0.8f, 1.0f); // Light gray
+    public static final Color STONE_COLOR      = new Color(0.5f, 0.5f, 0.5f, 1.0f); // Neutral gray
+    public static final Color WOOD_COLOR       = new Color(0.5f, 0.3f, 0.0f, 1.0f); // Dark brown
+
     // Map generation
     public static final int SURFACE_MAP_WIDTH  = 200;
     public static final int SURFACE_MAP_HEIGHT = 200;
