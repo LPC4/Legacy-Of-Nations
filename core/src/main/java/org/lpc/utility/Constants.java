@@ -2,6 +2,7 @@ package org.lpc.utility;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
@@ -37,4 +38,7 @@ public class Constants {
     public static final int MENU_BUTTON_WIDTH       = 200;
     public static final int MENU_BUTTON_HEIGHT      = 40;
     public static final Skin DEFAULT_BUTTON_SKIN    = new Skin(Gdx.files.internal("menu/default/uiskin.json"));
+
+    // Textures
+    public static final Texture VEGETATION_TEXTURE  = new Texture("textures/vegetation.png");;
 }

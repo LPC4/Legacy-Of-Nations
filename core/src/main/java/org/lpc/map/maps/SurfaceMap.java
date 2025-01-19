@@ -1,10 +1,14 @@
 package org.lpc.map.maps;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import lombok.Getter;
 import lombok.Setter;
 import org.lpc.MainGame;
@@ -18,7 +22,8 @@ import org.lpc.utility.Constants;
 import org.lpc.utility.PerlinNoise;
 import org.lpc.utility.Position;
 
-import java.util.Random;
+import java.sql.Array;
+import java.util.*;
 
 @Getter
 public class SurfaceMap extends BaseMap {
@@ -26,6 +31,7 @@ public class SurfaceMap extends BaseMap {
     private final PerlinNoise heightNoise;
     private final PerlinNoise moistureNoise;
     private final MainGame game;
+    private final ArrayList<Sprite> vegetation;
 
     @Getter
     @Setter
@@ -37,6 +43,7 @@ public class SurfaceMap extends BaseMap {
         private float moisture;
         private float height;
         private float movementModifier;
+        private float vegetationDensity;
 
         public SurfaceTile(Position pos, TerrainType terrain, float moisture, float height) {
             this.position = pos;
@@ -46,8 +53,10 @@ public class SurfaceMap extends BaseMap {
             this.moisture = moisture;
             this.height = height;
             this.movementModifier = TerrainType.getMovementModifier(terrain);
+            this.vegetationDensity = TerrainType.calculateVegetationDensity(terrain, moisture, height);
         }
     }
+
 
     public SurfaceMap(int width, int height, MainGame game) {
         this.width = width;
@@ -56,8 +65,31 @@ public class SurfaceMap extends BaseMap {
         this.heightNoise = new PerlinNoise();
         this.moistureNoise = new PerlinNoise();
         this.game = game;
+        this.vegetation = new ArrayList<>();
         generateMap();
         generateResources();
+        generateVegetation();
+    }
+
+    private void generateVegetation() {
+        Random random = new Random();
+        Texture vegetationTexture = Constants.VEGETATION_TEXTURE;
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                SurfaceTile tile = tiles[x][y];
+                if (TerrainType.hasVegetation(tile.getTerrain()) && random.nextFloat() < tile.getVegetationDensity()) {
+                    Sprite sprite = new Sprite(vegetationTexture);
+                    // Set sprite properties
+                    sprite.setPosition(x * MapScale.SURFACE.getPixelsPerTile(), y * MapScale.SURFACE.getPixelsPerTile());
+                    sprite.setSize(MapScale.SURFACE.getPixelsPerTile(), MapScale.SURFACE.getPixelsPerTile());
+                    // Add some randomization
+                    sprite.setRotation(random.nextFloat() * 360);
+                    sprite.setScale(0.8f + random.nextFloat() * 0.4f);
+                    vegetation.add(sprite);
+                }
+            }
+        }
     }
 
     private void generateResources() {
@@ -219,14 +251,51 @@ public class SurfaceMap extends BaseMap {
         }
 
         shapeRenderer.end();
+
+        //renderVegetation(batch);
+    }
+
+    private void renderVegetation(SpriteBatch spriteBatch) {
+        OrthographicCamera camera = game.getGameScreen().getCamera();
+        float tileSize = MapScale.SURFACE.getPixelsPerTile();
+
+        float leftX = camera.position.x - camera.viewportWidth / 2 * camera.zoom - tileSize;
+        float rightX = camera.position.x + camera.viewportWidth / 2 * camera.zoom + tileSize;
+        float bottomY = camera.position.y - camera.viewportHeight / 2 * camera.zoom - tileSize;
+        float topY = camera.position.y + camera.viewportHeight / 2 * camera.zoom + tileSize;
+
+        spriteBatch.begin();
+        spriteBatch.setProjectionMatrix(camera.combined);
+
+        for (Sprite sprite : vegetation) {
+            if (sprite.getX() < rightX && sprite.getX() + sprite.getWidth() > leftX &&
+                sprite.getY() < topY && sprite.getY() + sprite.getHeight() > bottomY) {
+                sprite.draw(spriteBatch);
+            }
+        }
+
+        spriteBatch.end();
     }
 
     private void renderTile(ShapeRenderer shapeRenderer, SurfaceTile tile, int x, int y) {
         float tileSize = MapScale.SURFACE.getPixelsPerTile();
         float tileX = x * tileSize;
         float tileY = y * tileSize;
+        float tileHeight = tile.getHeight();
 
-        shapeRenderer.setColor(getTerrainColor(tile.getTerrain()));
+        Color heightShade;
+        Color finalColor;
+
+        // Render water with a slight shade of the height
+        if (tile.getTerrain() == TerrainType.WATER) {
+            heightShade = new Color(tileHeight, tileHeight, tileHeight, 0.1f);
+            finalColor = getTerrainColor(tile.getTerrain()).cpy();
+            finalColor.add(heightShade);
+        } else {
+            finalColor = getTerrainColor(tile.getTerrain()).cpy();
+        }
+
+        shapeRenderer.setColor(finalColor);
         shapeRenderer.rect(tileX, tileY, tileSize, tileSize);
     }
 
@@ -260,6 +329,7 @@ public class SurfaceMap extends BaseMap {
 
         renderResourceDots(shapeRenderer, tile, tileX, tileY, innerTileSize);
     }
+
 
     private void renderResourceDots(ShapeRenderer shapeRenderer, SurfaceTile tile, float tileX, float tileY, float innerTileSize) {
         int resourceSize = 4;

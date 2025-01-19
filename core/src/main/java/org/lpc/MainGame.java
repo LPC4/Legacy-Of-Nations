@@ -26,18 +26,23 @@ public class MainGame extends Game {
     private InputHandler inputHandler;
     private float accumulator;
 
+    /// Features to be implemented:
+    ///  - Add audio to the game (low hum in main menu, music in game)
+    ///  - Add movement to the main menu (twinkling stars, moving clouds, starship flying by)
+    ///  - Good logo for the game
+
     @Override
     public void create() {
         LOGGER.info("Initializing game");
 
+        this.startScreen = new StartScreen(this);
+        setScreen(startScreen);
+
         this.gameStateManager = new GameStateManager(this);
         this.gameScreen = new GameScreen(this);
-        this.startScreen = new StartScreen(this);
         this.menuScreen = new MenuScreen(this);
         this.inputHandler = new InputHandler(this);
         this.accumulator = 0f;
-
-        setScreen(startScreen);
 
         LOGGER.info("Game created and set to StartScreen");
     }
@@ -60,9 +65,9 @@ public class MainGame extends Game {
 
     @Override
     public void dispose() {
-        super.dispose();
         LOGGER.info("Disposing game resources");
 
+        super.dispose();
         gameScreen.dispose();
         startScreen.dispose();
         menuScreen.dispose();
@@ -70,7 +75,6 @@ public class MainGame extends Game {
         LOGGER.info("Game disposed, exiting");
 
         Gdx.app.exit();
-
         LogManager.shutdown();
         deleteLogFiles();
     }
