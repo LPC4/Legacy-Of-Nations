@@ -26,14 +26,14 @@ public class GameScreen implements Screen {
     private final MainGame game;
     private final SpriteBatch batch;
     private final ShapeRenderer shapeRenderer;
-    private final OrthographicCamera camera;
     private final GameStateManager gameStateManager;
+    private OrthographicCamera camera;
 
     public GameScreen(MainGame game) {
         this.game = game;
         this.batch = new SpriteBatch();
         this.shapeRenderer = new ShapeRenderer();
-        this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        this.camera = game.getGameStateManager().getMapSystem().getMap().getRenderer().getCamera();
         this.camera.setToOrtho(false);
         this.gameStateManager = game.getGameStateManager();
 
@@ -50,6 +50,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
+        this.camera = game.getGameStateManager().getMapSystem().getMap().getRenderer().getCamera();
         LOGGER.info("Game screen shown");
         Gdx.input.setInputProcessor(game.getInputHandler());
     }

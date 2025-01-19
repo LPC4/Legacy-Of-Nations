@@ -13,7 +13,7 @@ import static org.lpc.utility.Constants.SURFACE_MAP_WIDTH;
 @Getter
 public class MapSystem {
     private static final Logger LOGGER = LogManager.getLogger(MapSystem.class);
-    private final SurfaceMap surfaceMap;       // Most detailed
+    private final SurfaceMap surfaceMap;
 
     /// --- to be implemented ---
     /// private RegionalMap regionalMap;     // Groups of tiles
