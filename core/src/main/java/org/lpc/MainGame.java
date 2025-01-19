@@ -31,6 +31,7 @@ public class MainGame extends Game {
     ///  - Add audio to the game (low hum in main menu, music in game)
     ///  - Add movement to the main menu (twinkling stars, moving clouds, starship flying by)
     ///  - Good logo for the game
+    ///  - Fix map system
 
     @Override
     public void create() {

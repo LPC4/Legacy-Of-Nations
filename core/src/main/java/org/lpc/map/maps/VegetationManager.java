@@ -1,9 +1,9 @@
-package org.lpc.map;
+package org.lpc.map.maps;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import lombok.Getter;
-import org.lpc.map.maps.SurfaceMap;
+import org.lpc.map.MapScale;
 import org.lpc.terrain.TerrainType;
 import org.lpc.utility.Constants;
 
@@ -33,9 +33,8 @@ public class VegetationManager {
     }
 
     private void generateVegetationForTile(SurfaceMap.SurfaceTile tile, int x, int y, Texture vegetationTexture) {
-        if (!TerrainType.hasVegetation(tile.getTerrain())) {
+        if (!TerrainType.hasVegetation(tile.getTerrain()))
             return;
-        }
 
         float density = tile.getVegetationDensity();
         int vegetationCount = calculateVegetationCount(density);
@@ -73,7 +72,7 @@ public class VegetationManager {
         // Rotation (0-360 degrees)
         sprite.setRotation(random.nextFloat() * 360);
 
-        // Optional: Add slight color variation
+        // Add slight color variation
         sprite.setColor(
                 1f,  // R
                 1f,  // G

@@ -17,10 +17,8 @@ import org.lpc.MainGame;
 
 import javax.swing.*;
 
-import static com.badlogic.gdx.Input.Keys.F11;
-import static com.badlogic.gdx.Input.Keys.SPACE;
-import static org.lpc.utility.Constants.WINDOW_HEIGHT;
-import static org.lpc.utility.Constants.WINDOW_WIDTH;
+import static com.badlogic.gdx.Input.Keys.*;
+import static org.lpc.utility.Constants.*;
 
 public class StartScreen implements Screen {
     private static final Logger LOGGER = LogManager.getLogger(StartScreen.class);
@@ -35,6 +33,10 @@ public class StartScreen implements Screen {
 
     @Override
     public void show() {
+        if (START_FULLSCREEN) {
+            toggleFullscreen();
+        }
+
         setupStage();
     }
 
@@ -141,6 +143,7 @@ public class StartScreen implements Screen {
 
     @Override
     public void dispose() {
+        LOGGER.info("Start screen disposed");
         stage.dispose();
     }
 }

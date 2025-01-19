@@ -1,4 +1,4 @@
-package org.lpc.map;
+package org.lpc.map.maps;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -8,25 +8,32 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import lombok.Getter;
 import org.lpc.MainGame;
-import org.lpc.map.maps.SurfaceMap;
+import org.lpc.map.BaseMap;
+import org.lpc.map.IMapRenderer;
+import org.lpc.map.MapScale;
 import org.lpc.terrain.TerrainType;
 import org.lpc.terrain.resources.ResourceType;
 import org.lpc.utility.Constants;
-import sun.java2d.Surface;
 
 import java.util.List;
 
 @Getter
-public class MapRenderer {
+public class SurfaceMapRenderer implements IMapRenderer {
     private final MainGame game;
     private final OrthographicCamera camera;
 
-    public MapRenderer(MainGame game) {
+    public SurfaceMapRenderer(MainGame game) {
         this.game = game;
         this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
-    public void render(SurfaceMap.SurfaceTile[][] tiles, List<Sprite> vegetation, ShapeRenderer shapeRenderer, SpriteBatch batch) {
+    @Override
+    public void render(BaseMap.BaseTile[][] tiles, ShapeRenderer shapeRenderer, SpriteBatch batch) {
+        if (!(tiles instanceof SurfaceMap.SurfaceTile[][])) {
+           throw new IllegalArgumentException("SurfaceMapRenderer can only render SurfaceMap tiles");
+        }
+        SurfaceMap.SurfaceTile[][] surfaceTiles = (SurfaceMap.SurfaceTile[][]) tiles;
+
         OrthographicCamera camera = game.getGameScreen().getCamera();
         camera.update();
 
@@ -43,10 +50,7 @@ public class MapRenderer {
         int endY = Math.min(tiles[0].length - 1, (int) (topY / tileSize));
 
         // Render terrain
-        renderTerrain(tiles, startX, endX, startY, endY, shapeRenderer);
-
-        // Render vegetation
-        renderVegetation(vegetation, leftX, rightX, bottomY, topY, batch);
+        renderTerrain(surfaceTiles, startX, endX, startY, endY, shapeRenderer);
     }
 
     private void renderTerrain(SurfaceMap.SurfaceTile[][] tiles, int startX, int endX, int startY, int endY,

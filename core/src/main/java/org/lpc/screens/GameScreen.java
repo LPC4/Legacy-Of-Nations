@@ -33,9 +33,9 @@ public class GameScreen implements Screen {
         this.game = game;
         this.batch = new SpriteBatch();
         this.shapeRenderer = new ShapeRenderer();
-        this.camera = game.getGameStateManager().getMapSystem().getMap().getRenderer().getCamera();
-        this.camera.setToOrtho(false);
         this.gameStateManager = game.getGameStateManager();
+        this.camera = gameStateManager.getMapSystem().getMap().getRenderer().getCamera();
+        this.camera.setToOrtho(false);
 
         setCameraToMapCenter();
     }
@@ -93,6 +93,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-
+        LOGGER.info("Disposing GameScreen resources");
+        batch.dispose();
+        shapeRenderer.dispose();
     }
 }
