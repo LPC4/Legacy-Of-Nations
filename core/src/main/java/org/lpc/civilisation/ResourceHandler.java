@@ -2,7 +2,11 @@ package org.lpc.civilisation;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.javatuples.Pair;
 import org.lpc.map.BaseMap;
+import org.lpc.map.MapScale;
+import org.lpc.map.maps.SurfaceMap;
+import org.lpc.terrain.buildings.BaseBuilding;
 import org.lpc.terrain.resources.ResourceType;
 
 import java.util.HashMap;
@@ -24,15 +28,20 @@ public class ResourceHandler {
         }
     }
 
-    public void harvestResource(ResourceType type, int amount) {
-        List<BaseMap.BaseTile> territory = civilisation.getTerritoryHandler().getTerritory();
-        int totalAmount = 0;
+    public void update() {
+        harvestSurfaceTiles();
+    }
 
-        for (BaseMap.BaseTile tile : territory) {
-            totalAmount += tile.harvest(type, amount);
+    private void harvestSurfaceTiles() {
+        List<SurfaceMap.SurfaceTile> territory = civilisation.getTerritoryHandler().getSurfaceTerritory();
+
+        for (SurfaceMap.SurfaceTile tile : territory) {
+            Pair<ResourceType, Integer> harvested = tile.harvestResources();
+
+            if (harvested == null) continue;
+
+            addResource(harvested.getValue0(), harvested.getValue1());
         }
-
-        addResource(type, totalAmount);
     }
 
     public void addResource(ResourceType type, int amount) {
@@ -43,7 +52,11 @@ public class ResourceHandler {
         if (resources.get(type) >= amount) {
             resources.put(type, resources.get(type) - amount);
         } else {
-            throw new IllegalArgumentException("Invalid amount to remove");
+            resources.put(type, 0);
         }
+    }
+
+    public int getResourceAmount(ResourceType type) {
+        return resources.get(type);
     }
 }

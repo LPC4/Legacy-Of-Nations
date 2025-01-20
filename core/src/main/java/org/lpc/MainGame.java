@@ -4,6 +4,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
@@ -25,7 +26,11 @@ public class MainGame extends Game {
     private StartScreen startScreen;
     private MenuScreen menuScreen;
     private InputHandler inputHandler;
+    private Settings settings;
+    private UIRenderer uiRenderer;
     private float accumulator;
+
+    private ShaderProgram blurShader;
 
     /// Features to be implemented:
     ///  - Add audio to the game (low hum in main menu, music in game)
@@ -37,16 +42,27 @@ public class MainGame extends Game {
     public void create() {
         LOGGER.info("Initializing game");
 
+        initShaders();
+
+        this.settings = new Settings();
+        this.uiRenderer = new UIRenderer(this);
         this.gameStateManager = new GameStateManager(this);
-        this.inputHandler = new InputHandler(this);
+        this.inputHandler = new InputHandler(this, settings);
         this.accumulator = 0f;
 
-        this.gameScreen = new GameScreen(this);
+        this.gameScreen = new GameScreen(this, gameStateManager, uiRenderer);
         this.menuScreen = new MenuScreen(this);
         this.startScreen = new StartScreen(this);
         setScreen(startScreen);
 
         LOGGER.info("Game created and set to StartScreen");
+    }
+
+    private void initShaders() {
+        blurShader = new ShaderProgram(Gdx.files.internal("vertex_shader.glsl"), Gdx.files.internal("blur.frag"));
+        if (!blurShader.isCompiled()) {
+            Gdx.app.error("Shader", "Error compiling shader: " + blurShader.getLog());
+        }
     }
 
     @Override
@@ -60,8 +76,11 @@ public class MainGame extends Game {
 
         final float fixedTimeStep = 1f / 20f; // 20 updates per second
         if (accumulator >= fixedTimeStep) {
-            gameStateManager.update();
             accumulator -= fixedTimeStep;
+
+            if (screen == gameScreen) {
+                gameStateManager.update();
+            }
         }
     }
 

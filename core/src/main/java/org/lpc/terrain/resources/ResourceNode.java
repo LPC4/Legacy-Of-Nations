@@ -1,5 +1,6 @@
 package org.lpc.terrain.resources;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +19,16 @@ public class ResourceNode {
         resources.put(type, resources.getOrDefault(type, 0) + quantity);
     }
 
+    public ArrayList<ResourceType> getAvailableResources() {
+        ArrayList<ResourceType> availableResources = new ArrayList<>();
+        for (ResourceType type : ResourceType.values()) {
+            if (resources.get(type) > 0) {
+                availableResources.add(type);
+            }
+        }
+        return availableResources;
+    }
+
     public int getDifferentResourceCount() {
         // get all resources that have a quantity greater than 0
         return (int) resources.entrySet().stream().filter(entry -> entry.getValue() > 0).count();
@@ -34,6 +45,14 @@ public class ResourceNode {
     public int harvestResource(ResourceType type, int amount) {
         if (amount > 0 && resources.getOrDefault(type, 0) >= amount) {
             resources.put(type, resources.get(type) - amount);
+            return amount;
+        } else {
+            throw new IllegalArgumentException("Invalid amount to harvest");
+        }
+    }
+
+    public int harvestReplicableResource(ResourceType type, int amount) {
+        if (amount > 0 && resources.getOrDefault(type, 0) >= amount) {
             return amount;
         } else {
             throw new IllegalArgumentException("Invalid amount to harvest");

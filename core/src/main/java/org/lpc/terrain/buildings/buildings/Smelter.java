@@ -4,13 +4,13 @@ import lombok.Getter;
 import org.lpc.terrain.buildings.BaseBuilding;
 import org.lpc.terrain.buildings.BuildingFunctionality;
 import org.lpc.terrain.resources.ResourceType;
-
+/*
 @Getter
 public class Smelter extends BaseBuilding {
     private final ResourceType resourceType;
 
     public Smelter() {
-        super(BuildingFunctionality.RESOURCE_REFINING, 1000);
+        super(BuildingFunctionality.RESOURCE_REFINING, 1000, null);
         this.resourceType = ResourceType.IRON;
     }
 
@@ -19,4 +19,4 @@ public class Smelter extends BaseBuilding {
         // Implement specific functionality for the Smelter
     }
 }
-
+*/

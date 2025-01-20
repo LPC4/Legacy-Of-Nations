@@ -13,12 +13,12 @@ import org.lpc.utility.Position;
 
 @Getter
 @Setter
-public abstract class BaseMap {
+public abstract class BaseMap<T extends BaseMap.BaseTile> {
     protected int width;
     protected int height;
-    protected final IMapGenerator mapGenerator;
-    protected final IMapRenderer renderer;
-    protected final BaseTile[][] tiles;
+    protected final IMapGenerator<T> mapGenerator;
+    protected final IMapRenderer<T> renderer;
+    protected final T[][] tiles;
     protected final MainGame game;
 
     // Each map type implements their own tile type
@@ -35,10 +35,11 @@ public abstract class BaseMap {
             this.owner = null;
         }
 
-        public abstract int harvest(ResourceType type, int amount);
+        public abstract Pair<ResourceType, Integer> harvestResources();
+        public abstract void update();
     }
 
-    public BaseMap(int width, int height, MainGame game, IMapGenerator mapGenerator, IMapRenderer renderer, BaseTile[][] tiles) {
+    public BaseMap(int width, int height, MainGame game, IMapGenerator<T> mapGenerator, IMapRenderer<T> renderer, T[][] tiles) {
         this.width = width;
         this.height = height;
         this.mapGenerator = mapGenerator;
@@ -58,6 +59,27 @@ public abstract class BaseMap {
     protected void generateMap() {
         mapGenerator.generateTerrain(tiles, width, height);
         mapGenerator.generateResources(tiles);
+    }
+
+    public BaseTile[] getNeighbours(BaseTile tile) {
+        int x = tile.getPosition().getGridX();
+        int y = tile.getPosition().getGridY();
+        BaseTile[] neighbours = new BaseTile[4];
+
+        if (x > 0) {
+            neighbours[0] = tiles[x - 1][y];
+        }
+        if (x < width - 1) {
+            neighbours[1] = tiles[x + 1][y];
+        }
+        if (y > 0) {
+            neighbours[2] = tiles[x][y - 1];
+        }
+        if (y < height - 1) {
+            neighbours[3] = tiles[x][y + 1];
+        }
+
+        return neighbours;
     }
 }
 

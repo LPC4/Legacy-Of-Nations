@@ -9,18 +9,22 @@ import com.badlogic.gdx.math.Vector3;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Set;
+
 import static org.lpc.utility.Constants.*;
 
 public class InputHandler implements InputProcessor {
     private static final Logger LOGGER = LogManager.getLogger(InputHandler.class);
 
     private final MainGame game;
+    private final Settings settings;
     private boolean isDragging;
     private int lastX;
     private int lastY;
 
-    public InputHandler(MainGame game) {
+    public InputHandler(MainGame game, Settings settings) {
         this.game = game;
+        this.settings = settings;
         Gdx.input.setInputProcessor(this);
         LOGGER.info("InputHandler initialized");
     }
@@ -57,6 +61,13 @@ public class InputHandler implements InputProcessor {
                 LOGGER.info("Switched to fullscreen mode");
             }
         }
+        if (keycode == Input.Keys.R) {
+            LOGGER.info("R key pressed, changing renderResources to {}", settings.changeRenderResources());
+        }
+        if (keycode == Input.Keys.G) {
+            LOGGER.info("G key pressed, changing renderGrid to {}", settings.changeRenderGrid());
+        }
+
         return false;
     }
 

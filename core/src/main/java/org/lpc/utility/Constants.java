@@ -46,8 +46,19 @@ public class Constants {
     public static final int MENU_BUTTON_WIDTH       = 200;
     public static final int MENU_BUTTON_HEIGHT      = 40;
     public static final Skin DEFAULT_BUTTON_SKIN    = new Skin(Gdx.files.internal("menu/default/uiskin.json"));
-    public static final boolean START_FULLSCREEN    = true;
+    public static final boolean START_FULLSCREEN    = false;
 
     // Textures
     public static final Texture VEGETATION_TEXTURE  = new Texture("textures/vegetation.png");;
+
+    // Delays
+    public static final int SAWMILL_HARVEST_DELAY_TICKS = 20 * 20; // 20 seconds
+    public static final int FARM_HARVEST_DELAY_TICKS = 20 * 10; // 15 seconds
+
+    public static final int POPULATION_CHANGE_DELAY_TICKS = 20 * 2; // 60 seconds
+    public static final int POPULATION_FOOD_CONSUMPTION_DELAY_TICKS = 20 * 5; // 1 second
+
+    // Rates
+    public static final float FARM_HARVEST_RATE = 0.5f;
+    public static final float SAWMILL_HARVEST_RATE = 0.2f;
 }

@@ -32,7 +32,7 @@ public class MapSystem {
         surfaceMap.update();
     }
 
-    public BaseMap getMap() {
+    public BaseMap<? extends BaseMap.BaseTile> getMap() {
         switch (currentScale) {
             case SURFACE:
                 return surfaceMap;

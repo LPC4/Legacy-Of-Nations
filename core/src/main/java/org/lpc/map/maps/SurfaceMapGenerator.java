@@ -11,7 +11,7 @@ import org.lpc.utility.Position;
 
 import java.util.Random;
 
-public class SurfaceMapGenerator implements IMapGenerator {
+public class SurfaceMapGenerator implements IMapGenerator<SurfaceMap.SurfaceTile> {
     private final PerlinNoise heightNoise;
     private final PerlinNoise moistureNoise;
 
@@ -21,11 +21,7 @@ public class SurfaceMapGenerator implements IMapGenerator {
     }
 
     @Override
-    public void generateTerrain(BaseMap.BaseTile[][] tiles, int width, int height) {
-        if (!(tiles instanceof SurfaceMap.SurfaceTile[][])) {
-            // should never happen, but just in case
-            throw new IllegalArgumentException("Tiles must be of type SurfaceTile");
-        }
+    public void generateTerrain(SurfaceMap.SurfaceTile[][] tiles, int width, int height) {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 tiles[x][y] = generateTile(x, y);
@@ -86,12 +82,8 @@ public class SurfaceMapGenerator implements IMapGenerator {
     }
 
     @Override
-    public void generateResources(BaseMap.BaseTile[][] tiles) {
-        if (!(tiles instanceof SurfaceMap.SurfaceTile[][])) {
-            throw new IllegalArgumentException("Tiles must be of type SurfaceTile");
-        }
-        SurfaceMap.SurfaceTile[][] surfaceTiles = (SurfaceMap.SurfaceTile[][]) tiles;
-        for (SurfaceMap.SurfaceTile[] row : surfaceTiles) {
+    public void generateResources(SurfaceMap.SurfaceTile[][] tiles) {
+        for (SurfaceMap.SurfaceTile[] row : tiles) {
             for (SurfaceMap.SurfaceTile tile : row) {
                 generateResourcesForTile(tile);
             }

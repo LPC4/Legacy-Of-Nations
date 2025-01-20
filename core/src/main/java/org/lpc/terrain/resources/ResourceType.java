@@ -42,5 +42,10 @@ public enum ResourceType {
      * It can be gathered from iron deposits and mountains.
      * It is a non-renewable resource.
      */
-    IRON
+    IRON;
+
+    @Override
+    public String toString() {
+        return name().substring(0, 1).toUpperCase() + name().substring(1).toLowerCase();
+    }
 }

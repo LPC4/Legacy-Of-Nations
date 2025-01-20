@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import lombok.Getter;
@@ -13,9 +14,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lpc.GameStateManager;
 import org.lpc.MainGame;
+import org.lpc.UIRenderer;
 import org.lpc.map.BaseMap;
 import org.lpc.map.MapScale;
-import org.lpc.map.MapSystem;
 
 import static org.lpc.utility.Constants.MAX_ZOOM;
 
@@ -27,23 +28,32 @@ public class GameScreen implements Screen {
     private final SpriteBatch batch;
     private final ShapeRenderer shapeRenderer;
     private final GameStateManager gameStateManager;
+    private final UIRenderer uiRenderer;
     private OrthographicCamera camera;
+    private OrthographicCamera uiCamera;
 
-    public GameScreen(MainGame game) {
+    public GameScreen(MainGame game, GameStateManager gameStateManager, UIRenderer uiRenderer) {
         this.game = game;
         this.batch = new SpriteBatch();
         this.shapeRenderer = new ShapeRenderer();
-        this.gameStateManager = game.getGameStateManager();
+        this.gameStateManager = gameStateManager;
         this.camera = gameStateManager.getMapSystem().getMap().getRenderer().getCamera();
-        this.camera.setToOrtho(false);
+        this.uiCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        this.uiRenderer = uiRenderer;
 
-        setCameraToMapCenter();
+        initUiCamera();
+        initMapCamera();
     }
 
-    private void setCameraToMapCenter() {
-        BaseMap map = gameStateManager.getMapSystem().getMap();
+    private void initUiCamera() {
+        this.uiCamera.position.set(uiCamera.viewportWidth / 2, uiCamera.viewportHeight / 2, 0);
+    }
+
+    private void initMapCamera() {
+        this.camera.setToOrtho(false);
+        BaseMap<? extends BaseMap.BaseTile> map = gameStateManager.getMapSystem().getMap();
         MapScale scale = gameStateManager.getMapSystem().getCurrentScale();
-        camera.position.set(map.getWidth() * scale.getPixelsPerTile() / 2f, map.getHeight() * scale.getPixelsPerTile() / 2f, 0);
+        this.camera.position.set(map.getWidth() * scale.getPixelsPerTile() / 2f, map.getHeight() * scale.getPixelsPerTile() / 2f, 0);
         camera.zoom = MAX_ZOOM / 2f;
         camera.update();
     }
@@ -59,21 +69,33 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0.15f, 0.15f, 0.2f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
+
 
         renderMap();
+        renderUI();
+    }
+
+    private void renderUI() {
+        uiRenderer.render(batch, shapeRenderer, gameStateManager, uiCamera);
     }
 
     private void renderMap() {
-        BaseMap map = game.getGameStateManager().getMapSystem().getMap();
+        BaseMap<? extends BaseMap.BaseTile> map = game.getGameStateManager().getMapSystem().getMap();
         map.render(shapeRenderer, batch);
     }
 
     @Override
     public void resize(int i, int i1) {
         Vector3 prevPos = camera.unproject(new Vector3(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f, 0));
+
         camera.setToOrtho(false, i, i1);
         camera.position.set(prevPos);
         camera.update();
+
+        uiCamera.setToOrtho(false, i, i1);
+        uiCamera.position.set(uiCamera.viewportWidth / 2, uiCamera.viewportHeight / 2, 0);
+        uiCamera.update();
     }
 
     @Override
@@ -96,5 +118,6 @@ public class GameScreen implements Screen {
         LOGGER.info("Disposing GameScreen resources");
         batch.dispose();
         shapeRenderer.dispose();
+        uiRenderer.dispose();
     }
 }

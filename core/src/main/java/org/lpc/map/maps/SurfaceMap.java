@@ -1,9 +1,8 @@
 package org.lpc.map.maps;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import lombok.Getter;
 import lombok.Setter;
+import org.javatuples.Pair;
 import org.lpc.MainGame;
 import org.lpc.map.BaseMap;
 import org.lpc.map.MapScale;
@@ -13,9 +12,11 @@ import org.lpc.terrain.resources.ResourceNode;
 import org.lpc.terrain.resources.ResourceType;
 import org.lpc.utility.Position;
 
+import static org.lpc.map.maps.SurfaceMap.*;
+
 @Getter
 @Setter
-public class SurfaceMap extends BaseMap {
+public class SurfaceMap extends BaseMap<SurfaceTile> {
     //private final VegetationManager vegetationManager;
     private final MapScale scale = MapScale.SURFACE;
 
@@ -42,8 +43,22 @@ public class SurfaceMap extends BaseMap {
             this.vegetationDensity = TerrainType.calculateVegetationDensity(terrain, moisture, height);
         }
 
-        public int harvest(ResourceType type, int amount) {
-            return resources.harvestResource(type, amount);
+        /**
+         * Harvest resources from the tile
+         * @return Pair of ResourceType and amount harvested or null if the tile cannot be harvested
+         */
+        public Pair<ResourceType, Integer> harvestResources() {
+            if (building == null || !building.canHarvestResources()) {
+                return null;
+            }
+
+            return building.harvestResources();
+        }
+
+        public void update() {
+            if (building != null) {
+                building.update();
+            }
         }
     }
 
