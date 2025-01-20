@@ -22,7 +22,7 @@ public class GameStateManager implements Serializable {
     public GameStateManager(MainGame game) {
         LOGGER.info("Initializing GameStateManager");
         this.mapSystem = new MapSystem(game);
-        this.civilisation = new Civilisation(this, "Test");
+        this.civilisation = new Civilisation(game, this, "Test", game.getSettings().getStartingPopulation());
     }
 
     public void update() {

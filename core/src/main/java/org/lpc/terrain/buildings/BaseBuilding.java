@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.javatuples.Pair;
@@ -56,5 +57,13 @@ public abstract class BaseBuilding {
         if (health > maxHealth) {
             health = maxHealth;
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Building: ").append(type).append("\n");
+        sb.append("Health: ").append(health).append("/").append(maxHealth).append("\n");
+        return sb.toString();
     }
 }

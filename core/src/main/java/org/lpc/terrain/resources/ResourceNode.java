@@ -67,4 +67,14 @@ public class ResourceNode {
             throw new IllegalArgumentException("Invalid amount to replenish");
         }
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Resources: \n");
+        for (ResourceType type : ResourceType.values()) {
+            sb.append(type.toString()).append(": ").append(resources.get(type)).append("\n");
+        }
+        return sb.toString();
+    }
 }

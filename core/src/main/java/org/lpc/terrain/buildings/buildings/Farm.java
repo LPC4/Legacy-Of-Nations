@@ -45,7 +45,7 @@ public class Farm extends BaseBuilding {
 
         int harvest = resources.harvestReplicableResource(resourceType, harvestedAmount);
 
-        LOGGER.info("Harvesting resources from farm: {} {}", harvest, resourceType);
+        LOGGER.debug("Harvesting resources from farm: {} {}", harvest, resourceType);
 
         return new Pair<>(ResourceType.FOOD, harvest);
     }

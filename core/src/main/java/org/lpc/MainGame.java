@@ -58,13 +58,6 @@ public class MainGame extends Game {
         LOGGER.info("Game created and set to StartScreen");
     }
 
-    private void initShaders() {
-        blurShader = new ShaderProgram(Gdx.files.internal("vertex_shader.glsl"), Gdx.files.internal("blur.frag"));
-        if (!blurShader.isCompiled()) {
-            Gdx.app.error("Shader", "Error compiling shader: " + blurShader.getLog());
-        }
-    }
-
     @Override
     public void render() {
         super.render(); // Delegate render to the current screen
@@ -74,7 +67,7 @@ public class MainGame extends Game {
     private void handleUpdate() {
         accumulator += Gdx.graphics.getDeltaTime();
 
-        final float fixedTimeStep = 1f / 20f; // 20 updates per second
+        final float fixedTimeStep = 1f / settings.getTicksPerSecond();
         if (accumulator >= fixedTimeStep) {
             accumulator -= fixedTimeStep;
 
@@ -98,6 +91,13 @@ public class MainGame extends Game {
         Gdx.app.exit();
         LogManager.shutdown();
         deleteLogFiles();
+    }
+
+    private void initShaders() {
+        blurShader = new ShaderProgram(Gdx.files.internal("shaders/vertex_shader.glsl"), Gdx.files.internal("shaders/blur.frag"));
+        if (!blurShader.isCompiled()) {
+            Gdx.app.error("Shader", "Error compiling shader: " + blurShader.getLog());
+        }
     }
 
     private void deleteLogFiles() {

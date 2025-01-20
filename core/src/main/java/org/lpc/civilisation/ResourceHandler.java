@@ -2,6 +2,7 @@ package org.lpc.civilisation;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.javatuples.Pair;
 import org.lpc.map.BaseMap;
 import org.lpc.map.MapScale;
@@ -58,5 +59,16 @@ public class ResourceHandler {
 
     public int getResourceAmount(ResourceType type) {
         return resources.get(type);
+    }
+
+    @Override
+    public String toString() {
+        // format nicely
+        StringBuilder builder = new StringBuilder();
+        builder.append("Resources: \n");
+        for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
+            builder.append(" - ").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+        }
+        return builder.toString();
     }
 }

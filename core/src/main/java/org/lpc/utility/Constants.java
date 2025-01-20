@@ -52,11 +52,11 @@ public class Constants {
     public static final Texture VEGETATION_TEXTURE  = new Texture("textures/vegetation.png");;
 
     // Delays
-    public static final int SAWMILL_HARVEST_DELAY_TICKS = 20 * 20; // 20 seconds
-    public static final int FARM_HARVEST_DELAY_TICKS = 20 * 10; // 15 seconds
+    public static final int SAWMILL_HARVEST_DELAY_TICKS = 20 * 5; // 20 seconds
+    public static final int FARM_HARVEST_DELAY_TICKS = 20 * 2; // 10 seconds
 
-    public static final int POPULATION_CHANGE_DELAY_TICKS = 20 * 2; // 60 seconds
-    public static final int POPULATION_FOOD_CONSUMPTION_DELAY_TICKS = 20 * 5; // 1 second
+    public static final int POPULATION_CHANGE_DELAY_TICKS = (int) (20 * 3); // 60 seconds
+    public static final int POPULATION_FOOD_CONSUMPTION_DELAY_TICKS = (int) (20 * 3); // 1 second
 
     // Rates
     public static final float FARM_HARVEST_RATE = 0.5f;

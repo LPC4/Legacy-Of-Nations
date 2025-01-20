@@ -14,6 +14,7 @@ import org.lpc.terrain.resources.ResourceType;
 
 @Getter
 public class Civilisation {
+    private final MainGame game;
     private final GameStateManager gameStateManager;
     private final String name;
     private final Color color = new Color(0.5f, 0.0f, 0.5f, 0.5f); // purple
@@ -21,12 +22,9 @@ public class Civilisation {
     private final TerritoryHandler territoryHandler;
     private final PopulationHandler populationHandler;
 
-    public Civilisation(GameStateManager gameStateManager, String name) {
-        this(gameStateManager, name, 100);
-    }
-
-    public Civilisation(GameStateManager game, String name, int population) {
-        this.gameStateManager = game;
+    public Civilisation(MainGame game, GameStateManager gameStateManager, String name, int population) {
+        this.game = game;
+        this.gameStateManager = gameStateManager;
         this.name = name;
         this.resourceHandler = new ResourceHandler(this);
         this.territoryHandler = new TerritoryHandler(this);
@@ -41,6 +39,9 @@ public class Civilisation {
 
         territoryHandler.claimStartingTerritory(map.getWidth() / 2,  map.getHeight() / 2, populationHandler.getStartingRadius());
         territoryHandler.setStartingBuildings();
+
+        // Add starting resources
+        resourceHandler.addResource(ResourceType.FOOD, 100);
     }
 
     public void update() {
@@ -62,5 +63,14 @@ public class Civilisation {
 
     public int getPopulation() {
         return populationHandler.getPopulation();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Civilisation: ").append(name).append("\n");
+        builder.append("Population: ").append(getPopulation()).append("\n");
+        builder.append(resourceHandler.toString());
+        return builder.toString();
     }
 }

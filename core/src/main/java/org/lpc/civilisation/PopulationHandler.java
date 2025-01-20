@@ -50,25 +50,47 @@ public class PopulationHandler {
         int food = civilisation.getResourceAmount(ResourceType.FOOD);
 
         if (hasEnoughFoodForGrowth(food)) {
-            growPopulation(1); // Grow by 1% every tick
+            int excessFoodPercentage = (food - population) / population;
+
+            growPopulation(excessFoodPercentage / 10);
+        } else if (doesNotHaveEnoughFood(food)) {
+            int foodShortagePercentage = (population - food) / population;
+
+            shrinkPopulation(foodShortagePercentage / 10);
         }
     }
 
     private boolean hasEnoughFoodForGrowth(int food) {
         // Ensure there is enough food to support growth
-        return food >= getFoodConsumption() * 2;
+        return food >= population * 2;
+    }
+
+    private boolean doesNotHaveEnoughFood(int food) {
+        // Ensure there is not enough food to support the population
+        return food <  population;
     }
 
     private int getFoodConsumption() {
-        return population / 10;
+        return population;
     }
 
     private void growPopulation(int percentage) {
         LOGGER.info("Growing population: {}", percentage);
-        population += (population / 100) * percentage;
+        // Ensure at least 1 person grows if the percentage calculation is too small
+        int growth = Math.max((population * percentage) / 100, 1);
+        population += growth;
+    }
+
+    private void shrinkPopulation(int percentage) {
+        LOGGER.info("Shrinking population: {}", percentage);
+        // Ensure at least 1 person decreases if the percentage calculation is too small
+        int decline = Math.max((population * percentage) / 100, 1);
+        population -= decline;
     }
 
     public int getStartingRadius() {
         return population / 50;
     }
+
+
 }

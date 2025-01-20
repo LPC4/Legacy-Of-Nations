@@ -1,5 +1,6 @@
 package org.lpc.map.maps;
 
+import com.badlogic.gdx.math.Vector2;
 import lombok.Getter;
 import lombok.Setter;
 import org.javatuples.Pair;
@@ -81,5 +82,13 @@ public class SurfaceMap extends BaseMap<SurfaceTile> {
 
     public SurfaceTile getTile(int x, int y) {
         return (SurfaceTile) tiles[x][y];
+    }
+
+    public Vector2 getTilePosition(int x, int y) {
+        return new Vector2(x * MapScale.SURFACE.getPixelsPerTile(), y * MapScale.SURFACE.getPixelsPerTile());
+    }
+
+    public Vector2 getGridPosition(float x, float y) {
+        return new Vector2(x / MapScale.SURFACE.getPixelsPerTile(), y / MapScale.SURFACE.getPixelsPerTile());
     }
 }

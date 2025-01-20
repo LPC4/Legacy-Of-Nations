@@ -4,9 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import lombok.Getter;
 import org.lpc.MainGame;
@@ -45,39 +47,47 @@ public class SurfaceMapRenderer implements IMapRenderer<SurfaceMap.SurfaceTile> 
         OrthographicCamera gameCamera = game.getGameScreen().getCamera();
         gameCamera.update();
 
-        // Calculate visible area
         float tileSize = MapScale.SURFACE.getPixelsPerTile();
-        ViewBounds viewBounds = calculateViewBounds(gameCamera, tileSize, tiles);
+        ViewBounds viewBounds = calculateViewBounds(gameCamera, MapScale.SURFACE.getPixelsPerTile(), tiles);
 
-        // Set the game camera for world rendering
         shapeRenderer.setProjectionMatrix(gameCamera.combined);
         batch.setProjectionMatrix(gameCamera.combined);
 
         // 1. Render solid terrain first
         beginRenderShapes(shapeRenderer);
-        renderTerrain(tiles, viewBounds.startX, viewBounds.endX, viewBounds.startY, viewBounds.endY, shapeRenderer);
+        {
+            renderTerrain(tiles, viewBounds.startX, viewBounds.endX, viewBounds.startY, viewBounds.endY, shapeRenderer);
+        }
         endRenderShapes(shapeRenderer);
 
-        // 2. Render transparent elements
+        // Render transparent elements
         enableBlend();
-        beginRenderShapes(shapeRenderer);
-            renderCivilisationBorders(tiles, viewBounds.startX, viewBounds.endX, viewBounds.startY, viewBounds.endY, shapeRenderer);
+        {
+            // 2. Render civilisation borders and grid
+            beginRenderShapes(shapeRenderer);
+            {
+                renderCivilisationBorders(tiles, viewBounds.startX, viewBounds.endX, viewBounds.startY, viewBounds.endY, shapeRenderer);
 
-            if (game.getSettings().isRenderGrid()) {
-                renderGrid(shapeRenderer, tiles.length, tiles[0].length, tileSize);
+                if (game.getSettings().isRenderGrid()) {
+                    renderGrid(shapeRenderer, tiles.length, tiles[0].length, tileSize);
+                }
             }
-        endRenderShapes(shapeRenderer);
+            endRenderShapes(shapeRenderer);
 
-        // 3. Render all sprites
-        beginRenderSprites(batch);
-            renderBuildingSprites(tiles, viewBounds.startX, viewBounds.endX, viewBounds.startY, viewBounds.endY, batch);
-        endRenderSprites(batch);
+            // 3. Render all sprites
+            beginRenderSprites(batch);
+            {
+                renderBuildingSprites(tiles, viewBounds.startX, viewBounds.endX, viewBounds.startY, viewBounds.endY, batch);
+            }
+            endRenderSprites(batch);
 
-        // 4. Render progress bars
-        beginRenderShapes(shapeRenderer);
-            renderBuildingProgressBars(tiles, viewBounds.startX, viewBounds.endX, viewBounds.startY, viewBounds.endY, shapeRenderer);
-        endRenderShapes(shapeRenderer);
-
+            // 4. Render progress bars
+            beginRenderShapes(shapeRenderer);
+            {
+                renderBuildingProgressBars(tiles, viewBounds.startX, viewBounds.endX, viewBounds.startY, viewBounds.endY, shapeRenderer);
+            }
+            endRenderShapes(shapeRenderer);
+        }
         disableBlend();
     }
 
@@ -230,7 +240,7 @@ public class SurfaceMapRenderer implements IMapRenderer<SurfaceMap.SurfaceTile> 
     }
 
     public void renderResources(SurfaceMap.SurfaceTile tile, int x, int y, ShapeRenderer shapeRenderer) {
-        if (camera.zoom > 2f) return;
+        if (camera.zoom > 4f) return;
 
         float tileSize = MapScale.SURFACE.getPixelsPerTile();
         float padding = 2f;

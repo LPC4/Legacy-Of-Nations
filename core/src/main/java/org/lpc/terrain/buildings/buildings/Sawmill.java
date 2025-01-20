@@ -46,7 +46,7 @@ public class Sawmill extends BaseBuilding {
 
         int harvest = resources.harvestReplicableResource(resourceType, harvestedAmount);
 
-        LOGGER.info("Harvesting resources from sawmill: {} {}", harvest, resourceType);
+        LOGGER.debug("Harvesting resources from sawmill: {} {}", harvest, resourceType);
 
         return new Pair<>(ResourceType.WOOD, harvest);
     }
