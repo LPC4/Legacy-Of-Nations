@@ -13,12 +13,13 @@ import org.lpc.terrain.resources.ResourceNode;
 import org.lpc.terrain.resources.ResourceType;
 import org.lpc.utility.Position;
 
+import java.util.Optional;
+
 import static org.lpc.map.maps.SurfaceMap.*;
 
 @Getter
 @Setter
 public class SurfaceMap extends BaseMap<SurfaceTile> {
-
     @Getter
     @Setter
     public static class SurfaceTile extends BaseTile {
@@ -42,16 +43,12 @@ public class SurfaceMap extends BaseMap<SurfaceTile> {
             this.vegetationDensity = TerrainType.calculateVegetationDensity(terrain, moisture, height);
         }
 
-        /**
-         * Harvest resources from the tile
-         * @return Pair of ResourceType and amount harvested or null if the tile cannot be harvested
-         */
-        public Pair<ResourceType, Integer> harvestResources() {
+        public Optional<Pair<ResourceType, Integer>> harvestResource() {
             if (building == null || !building.canHarvestResources()) {
-                return null;
+                return Optional.empty();
             }
 
-            return building.harvestResources();
+            return Optional.of(building.harvestResources());
         }
 
         public void update() {
@@ -90,5 +87,9 @@ public class SurfaceMap extends BaseMap<SurfaceTile> {
 
     public Vector2 getGridPosition(float x, float y) {
         return new Vector2(x / MapScale.SURFACE.getPixelsPerTile(), y / MapScale.SURFACE.getPixelsPerTile());
+    }
+
+    public boolean isWithinBounds(Vector2 gridPos) {
+        return gridPos.x >= 0 && gridPos.x < width && gridPos.y >= 0 && gridPos.y < height;
     }
 }

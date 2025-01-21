@@ -2,9 +2,8 @@ package org.lpc.civilisation;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import jdk.tools.jmod.Main;
 import lombok.Getter;
+import lombok.NonNull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lpc.GameStateManager;
@@ -14,16 +13,19 @@ import org.lpc.terrain.resources.ResourceType;
 
 @Getter
 public class Civilisation {
-    private final MainGame game;
-    private final GameStateManager gameStateManager;
+    private final @NonNull MainGame game;
+    private final @NonNull GameStateManager gameStateManager;
+    private final @NonNull String name;
+    private final @NonNull Color color;
+    private final @NonNull ResourceHandler resourceHandler;
+    private final @NonNull TerritoryHandler territoryHandler;
+    private final @NonNull PopulationHandler populationHandler;
 
-    private final String name;
-    private final Color color;
-    private final ResourceHandler resourceHandler;
-    private final TerritoryHandler territoryHandler;
-    private final PopulationHandler populationHandler;
-
-    public Civilisation(MainGame game, GameStateManager gameStateManager, String name, int population) {
+    public Civilisation(@NonNull MainGame game,
+                        @NonNull GameStateManager gameStateManager,
+                        @NonNull String name,
+                        int population)
+    {
         this.game = game;
         this.gameStateManager = gameStateManager;
         this.name = name;
@@ -68,7 +70,7 @@ public class Civilisation {
     public String toString() {
         return
             "Civilisation: " + name + "\n" +
-            populationHandler.toString() + "\n" +
-            resourceHandler.toString();
+            populationHandler + "\n" +
+            resourceHandler;
     }
 }

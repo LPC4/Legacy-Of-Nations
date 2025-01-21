@@ -11,6 +11,8 @@ import org.lpc.terrain.resources.ResourceNode;
 import org.lpc.terrain.resources.ResourceType;
 import org.lpc.utility.TickedTimer;
 
+import java.util.Optional;
+
 import static org.lpc.utility.Constants.SAWMILL_HARVEST_DELAY_TICKS;
 import static org.lpc.utility.Constants.SAWMILL_HARVEST_RATE;
 
@@ -42,9 +44,13 @@ public class Sawmill extends BaseBuilding {
         ResourceNode resources = getTile().getResources();
 
         int amount = resources.getResourceQuantity(resourceType);
-        int harvestedAmount = (int) (amount * SAWMILL_HARVEST_RATE);
 
-        int harvest = resources.harvestReplicableResource(resourceType, harvestedAmount);
+        if (amount == 0) {
+            return new Pair<>(ResourceType.WOOD, 0);
+        }
+
+        int harvestedAmount = (int) (amount * SAWMILL_HARVEST_RATE);
+        int harvest = resources.harvestResource(resourceType, harvestedAmount);
 
         LOGGER.debug("Harvesting resources from sawmill: {} {}", harvest, resourceType);
 
@@ -52,7 +58,7 @@ public class Sawmill extends BaseBuilding {
     }
 
     @Override
-    public int getProgressPercentage() {
-        return harvestTimer.getProgressPercentage();
+    public Optional<Integer> getProgressPercentage() {
+        return Optional.of(harvestTimer.getProgressPercentage());
     }
 }

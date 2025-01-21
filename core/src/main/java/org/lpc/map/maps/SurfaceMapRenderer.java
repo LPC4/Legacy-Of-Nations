@@ -77,7 +77,8 @@ public class SurfaceMapRenderer implements IMapRenderer<SurfaceMap.SurfaceTile> 
             // 2. Render civilisation borders and grid
             beginRenderShapes(shapeRenderer);
             {
-                renderCivilisationBorders(tiles, viewBounds.startX, viewBounds.endX, viewBounds.startY, viewBounds.endY, shapeRenderer);
+                renderCivilisationBorders(tiles, viewBounds.startX, viewBounds.endX,
+                    viewBounds.startY, viewBounds.endY, shapeRenderer);
 
                 if (game.getSettings().isRenderGrid()) {
                     renderGrid(shapeRenderer, tiles.length, tiles[0].length, tileSize);
@@ -88,14 +89,16 @@ public class SurfaceMapRenderer implements IMapRenderer<SurfaceMap.SurfaceTile> 
             // 3. Render all sprites
             beginRenderSprites(batch);
             {
-                renderBuildingSprites(tiles, viewBounds.startX, viewBounds.endX, viewBounds.startY, viewBounds.endY, batch);
+                renderBuildingSprites(tiles, viewBounds.startX, viewBounds.endX,
+                    viewBounds.startY, viewBounds.endY, batch);
             }
             endRenderSprites(batch);
 
             // 4. Render progress bars
             beginRenderShapes(shapeRenderer);
             {
-                renderBuildingProgressBars(tiles, viewBounds.startX, viewBounds.endX, viewBounds.startY, viewBounds.endY, shapeRenderer);
+                renderBuildingProgressBars(tiles, viewBounds.startX, viewBounds.endX,
+                    viewBounds.startY, viewBounds.endY, shapeRenderer);
             }
             endRenderShapes(shapeRenderer);
         }
@@ -131,7 +134,8 @@ public class SurfaceMapRenderer implements IMapRenderer<SurfaceMap.SurfaceTile> 
         }
     }
 
-    private void renderBuildingSprites(SurfaceMap.SurfaceTile[][] surfaceTiles, int startX, int endX, int startY, int endY, SpriteBatch batch) {
+    private void renderBuildingSprites(SurfaceMap.SurfaceTile[][] surfaceTiles, int startX, int endX,
+                                       int startY, int endY, SpriteBatch batch) {
         float blur = 0;
 
         if (camera.zoom > 2f) {
@@ -150,9 +154,8 @@ public class SurfaceMapRenderer implements IMapRenderer<SurfaceMap.SurfaceTile> 
                 BaseBuilding building = tile.getBuilding();
                 Sprite buildingSprite = building.getSprite();
 
-                if (buildingSprite == null) continue;
-
-                buildingSprite.setPosition(x * MapScale.SURFACE.getPixelsPerTile(), y * MapScale.SURFACE.getPixelsPerTile());
+                buildingSprite.setPosition( x * MapScale.SURFACE.getPixelsPerTile(),
+                                            y * MapScale.SURFACE.getPixelsPerTile());
                 buildingSprite.draw(batch);
             }
         }
@@ -160,7 +163,8 @@ public class SurfaceMapRenderer implements IMapRenderer<SurfaceMap.SurfaceTile> 
         batch.setShader(null);
     }
 
-    private void renderBuildingProgressBars(SurfaceMap.SurfaceTile[][] surfaceTiles, int startX, int endX, int startY, int endY, ShapeRenderer renderer) {
+    private void renderBuildingProgressBars(SurfaceMap.SurfaceTile[][] surfaceTiles, int startX, int endX,
+                                            int startY, int endY, ShapeRenderer renderer) {
         if (camera.zoom > 2f) return;
 
         for (int x = startX; x <= endX; x++) {
@@ -169,9 +173,10 @@ public class SurfaceMapRenderer implements IMapRenderer<SurfaceMap.SurfaceTile> 
                 if (tile.getBuilding() == null) continue;
 
                 BaseBuilding building = tile.getBuilding();
-                if (building.getProgressPercentage() == -1) continue;
 
-                renderBuildingProgress(renderer, building, x, y);
+                if (building.getProgressPercentage().isPresent()) {
+                    renderBuildingProgress(renderer, building, x, y);
+                }
             }
         }
     }
@@ -183,7 +188,9 @@ public class SurfaceMapRenderer implements IMapRenderer<SurfaceMap.SurfaceTile> 
         float tileY = y * tileSize + padding;
         float innerTileSize = tileSize - (padding * 2);
 
-        float progress = building.getProgressPercentage() / 100f;
+        if (building.getProgressPercentage().isEmpty()) throw new IllegalArgumentException("Building progress empty");
+
+        float progress = building.getProgressPercentage().get() / 100f;
         float progressWidth = innerTileSize * progress;
         float progressHeight = 4f;
 
@@ -211,12 +218,11 @@ public class SurfaceMapRenderer implements IMapRenderer<SurfaceMap.SurfaceTile> 
         }
     }
 
-    private void renderTileBorders(SurfaceMap.SurfaceTile[][] tiles, int x, int y, int tileSize, ShapeRenderer shapeRenderer) {
+    private void renderTileBorders(SurfaceMap.SurfaceTile[][] tiles, int x, int y, int tileSize,
+                                   ShapeRenderer shapeRenderer) {
         SurfaceMap.SurfaceTile tile = tiles[x][y];
 
-        if (tile.getOwner() == null) {
-            return;
-        }
+        if (tile.getOwner() == null) return;
 
         renderTopBorder(tiles, x, y, tile, tileSize, shapeRenderer);
         renderRightBorder(tiles, x, y, tile, tileSize, shapeRenderer);
@@ -390,26 +396,24 @@ public class SurfaceMapRenderer implements IMapRenderer<SurfaceMap.SurfaceTile> 
     }
 
     private Color getTerrainColor(TerrainType terrain) {
-        switch (terrain) {
-            case WATER: return WATER_COLOR;
-            case BEACH: return BEACH_COLOR;
-            case DESERT: return DESERT_COLOR;
-            case FOREST: return FOREST_COLOR;
-            case HILLS: return HILLS_COLOR;
-            case MOUNTAIN: return MOUNTAIN_COLOR;
-            case PLAINS: return PLAINS_COLOR;
-            default: return Color.WHITE;
-        }
+        return switch (terrain) {
+            case WATER -> WATER_COLOR;
+            case BEACH -> BEACH_COLOR;
+            case DESERT -> DESERT_COLOR;
+            case FOREST -> FOREST_COLOR;
+            case HILLS -> HILLS_COLOR;
+            case MOUNTAIN -> MOUNTAIN_COLOR;
+            case PLAINS -> PLAINS_COLOR;
+        };
     }
 
     private Color getResourceColor(ResourceType type) {
-        switch (type) {
-            case FOOD: return FOOD_COLOR;
-            case WOOD: return WOOD_COLOR;
-            case STONE: return STONE_COLOR;
-            case IRON: return IRON_COLOR;
-            case GOLD: return GOLD_COLOR;
-            default: return Color.WHITE;
-        }
+        return switch (type) {
+            case FOOD -> FOOD_COLOR;
+            case WOOD -> WOOD_COLOR;
+            case STONE -> STONE_COLOR;
+            case IRON -> IRON_COLOR;
+            case GOLD -> GOLD_COLOR;
+        };
     }
 }

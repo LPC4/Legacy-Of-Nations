@@ -146,6 +146,8 @@ public class SurfaceMapGenerator implements IMapGenerator<SurfaceMap.SurfaceTile
             quantity = (int) (quantity * modifier);
 
         quantity = MathUtils.clamp(quantity, min, max);
-        tile.getResources().addResource(type, quantity);
+
+        if (quantity > 0)
+            tile.getResources().addResource(type, quantity);
     }
 }

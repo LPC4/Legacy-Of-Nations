@@ -2,17 +2,15 @@ package org.lpc.civilisation;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import org.javatuples.Pair;
-import org.lpc.map.BaseMap;
-import org.lpc.map.MapScale;
 import org.lpc.map.maps.SurfaceMap;
-import org.lpc.terrain.buildings.BaseBuilding;
 import org.lpc.terrain.resources.ResourceType;
 
+import javax.swing.text.html.Option;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -37,11 +35,11 @@ public class ResourceHandler {
         List<SurfaceMap.SurfaceTile> territory = civilisation.getTerritoryHandler().getSurfaceTerritory();
 
         for (SurfaceMap.SurfaceTile tile : territory) {
-            Pair<ResourceType, Integer> harvested = tile.harvestResources();
+            Optional<Pair<ResourceType, Integer>> harvested = tile.harvestResource();
 
-            if (harvested == null) continue;
-
-            addResource(harvested.getValue0(), harvested.getValue1());
+            harvested.ifPresent(pair ->
+                addResource(pair.getValue0(), pair.getValue1())
+            );
         }
     }
 

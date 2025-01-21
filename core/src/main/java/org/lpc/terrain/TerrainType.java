@@ -73,4 +73,9 @@ public enum TerrainType {
     public static boolean hasVegetation(TerrainType terrain) {
         return terrain == FOREST || terrain == PLAINS || terrain == HILLS || terrain == DESERT;
     }
+
+    @Override
+    public String toString() {
+        return name().substring(0, 1).toUpperCase() + name().substring(1).toLowerCase();
+    }
 }

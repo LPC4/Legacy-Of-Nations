@@ -29,8 +29,8 @@ public class GameScreen implements Screen {
     private final ShapeRenderer shapeRenderer;
     private final GameStateManager gameStateManager;
     private final UIRenderer uiRenderer;
+    private final OrthographicCamera uiCamera;
     private OrthographicCamera camera;
-    private OrthographicCamera uiCamera;
 
     public GameScreen(MainGame game, GameStateManager gameStateManager, UIRenderer uiRenderer) {
         this.game = game;
@@ -99,7 +99,7 @@ public class GameScreen implements Screen {
     }
 
     private void renderUI() {
-        uiRenderer.render(batch, shapeRenderer, gameStateManager, uiCamera);
+        uiRenderer.render(batch, gameStateManager, uiCamera);
     }
 
     private void renderMap() {

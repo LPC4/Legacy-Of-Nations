@@ -44,6 +44,10 @@ public enum ResourceType {
      */
     IRON;
 
+    public boolean isRenewable() {
+        return this == WOOD || this == FOOD;
+    }
+
     @Override
     public String toString() {
         return name().substring(0, 1).toUpperCase() + name().substring(1).toLowerCase();

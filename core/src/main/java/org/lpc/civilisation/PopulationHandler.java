@@ -10,6 +10,11 @@ import org.lpc.utility.TickedTimer;
 import static org.lpc.utility.Constants.POPULATION_CHANGE_DELAY_TICKS;
 import static org.lpc.utility.Constants.POPULATION_FOOD_CONSUMPTION_DELAY_TICKS;
 
+
+/**
+ * Handles the population of a civilisation
+ * Responsible for population growth and food consumption
+ */
 @Getter
 @Setter
 public class PopulationHandler {
@@ -42,7 +47,7 @@ public class PopulationHandler {
     }
 
     private void feedPopulation() {
-        LOGGER.info("Feeding population: {}", getFoodConsumption());
+        //LOGGER.info("Feeding population: {}", getFoodConsumption());
         civilisation.consumeResource(ResourceType.FOOD, getFoodConsumption());
     }
 
@@ -75,14 +80,14 @@ public class PopulationHandler {
     }
 
     private void growPopulation(int percentage) {
-        LOGGER.info("Growing population: {}", percentage);
+        LOGGER.debug("Growing population: {}", percentage);
         // Ensure at least 1 person grows if the percentage calculation is too small
         int growth = Math.max((population * percentage) / 100, 1);
         population += growth;
     }
 
     private void shrinkPopulation(int percentage) {
-        LOGGER.info("Shrinking population: {}", percentage);
+        LOGGER.debug("Shrinking population: {}", percentage);
         // Ensure at least 1 person decreases if the percentage calculation is too small
         int decline = Math.max((population * percentage) / 100, 1);
         population -= decline;

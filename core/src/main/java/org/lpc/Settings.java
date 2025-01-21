@@ -46,4 +46,12 @@ public class Settings {
             ticksPerSecond /= 2;
         }
     }
+
+    public void toggleRenderResources() {
+        renderResources = !renderResources;
+    }
+
+    public void toggleRenderGrid() {
+        renderGrid = !renderGrid;
+    }
 }

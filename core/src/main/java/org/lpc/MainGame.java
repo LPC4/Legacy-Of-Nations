@@ -13,6 +13,10 @@ import org.lpc.screens.StartScreen;
 import java.io.File;
 import java.util.Objects;
 
+/**
+ * Main game class
+ * Initializes the game and manages the game state
+ */
 @Getter
 public class MainGame extends Game {
     private static final Logger LOGGER = LogManager.getLogger(MainGame.class);
@@ -42,7 +46,7 @@ public class MainGame extends Game {
 
         this.settings = new Settings();
         this.uiRenderer = new UIRenderer(this);
-        this.gameStateManager = new GameStateManager(this);
+        this.gameStateManager = new GameStateManager(this, settings);
         this.inputHandler = new BaseInputHandler(this, gameStateManager.getMap().getInput());
         this.accumulator = 0f;
 

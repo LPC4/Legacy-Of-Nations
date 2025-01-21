@@ -22,10 +22,9 @@ public class BaseInputHandler implements InputProcessor {
     private static final int CLICK_THRESHOLD = 10; // Tolerance for detecting a click
     private static final int DRAG_THRESHOLD = 10;  // Tolerance for detecting dragging
 
-    // Map specific input handler
     private IMapInput mapSpecificInput;
 
-    // Mouse utility
+    // Mouse utility, can be used by map-specific input handlers
     @Getter private boolean isDragging;
     @Getter private int lastX;
     @Getter private int lastY;
