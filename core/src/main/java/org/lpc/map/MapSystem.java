@@ -16,10 +16,8 @@ public class MapSystem {
     private static final Logger LOGGER = LogManager.getLogger(MapSystem.class);
 
     private final SurfaceMap surfaceMap;
-    /// private RegionalMap regionalMap;     // Groups of tiles
-    /// private ContinentalMap continentMap; // Major regions
-    /// private PlanetaryMap planetMap;      // Whole world
-    /// private GalacticMap galaxyMap;       // Whole universe
+    /// private RegionalMap regionalMap;     // Major regions on a planet
+    /// private PlanetaryMap planetMap;      // Multiple planets
     private MapScale currentScale;
 
     public MapSystem(MainGame game) {
@@ -32,12 +30,11 @@ public class MapSystem {
         surfaceMap.update();
     }
 
-    public BaseMap<? extends BaseMap.BaseTile> getMap() {
+    public BaseMap<?> getMap() {
         switch (currentScale) {
             case SURFACE:
                 return surfaceMap;
             case REGIONAL:
-            case CONTINENTAL:
             case PLANETARY:
             default:
                 throw new UnsupportedOperationException("Not implemented yet");

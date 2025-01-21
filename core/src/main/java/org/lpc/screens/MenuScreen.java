@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -21,10 +22,14 @@ import org.apache.logging.log4j.Logger;
 import org.lpc.MainGame;
 
 import static com.badlogic.gdx.Input.Keys.F11;
-import static org.lpc.utility.Constants.*;
+import static org.lpc.utility.Constants.WINDOW_HEIGHT;
+import static org.lpc.utility.Constants.WINDOW_WIDTH;
 
 @Getter
 public class MenuScreen implements Screen {
+    private static final Skin DEFAULT_BUTTON_SKIN    = new Skin(Gdx.files.internal("menu/default/uiskin.json"));
+    private static final int MENU_BUTTON_WIDTH       = 200;
+    private static final int MENU_BUTTON_HEIGHT      = 40;
     private static final Logger LOGGER = LogManager.getLogger(MenuScreen.class);
 
     private final MainGame game;

@@ -1,15 +1,11 @@
 package org.lpc;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import lombok.Getter;
-import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.spi.LoggerAdapter;
 import org.lpc.screens.GameScreen;
 import org.lpc.screens.MenuScreen;
 import org.lpc.screens.StartScreen;
@@ -25,12 +21,12 @@ public class MainGame extends Game {
     private GameScreen gameScreen;
     private StartScreen startScreen;
     private MenuScreen menuScreen;
-    private InputHandler inputHandler;
+    private BaseInputHandler inputHandler;
     private Settings settings;
     private UIRenderer uiRenderer;
-    private float accumulator;
 
     private ShaderProgram blurShader;
+    private float accumulator;
 
     /// Features to be implemented:
     ///  - Add audio to the game (low hum in main menu, music in game)
@@ -47,7 +43,7 @@ public class MainGame extends Game {
         this.settings = new Settings();
         this.uiRenderer = new UIRenderer(this);
         this.gameStateManager = new GameStateManager(this);
-        this.inputHandler = new InputHandler(this, settings);
+        this.inputHandler = new BaseInputHandler(this, gameStateManager.getMap().getInput());
         this.accumulator = 0f;
 
         this.gameScreen = new GameScreen(this, gameStateManager, uiRenderer);

@@ -18,16 +18,27 @@ import org.lpc.map.MapScale;
 import org.lpc.terrain.TerrainType;
 import org.lpc.terrain.buildings.BaseBuilding;
 import org.lpc.terrain.resources.ResourceType;
-import org.lpc.utility.Constants;
-
-import java.util.List;
-
-import static org.lpc.utility.Constants.MAX_ZOOM;
 
 @Getter
 public class SurfaceMapRenderer implements IMapRenderer<SurfaceMap.SurfaceTile> {
     private final MainGame game;
     private final OrthographicCamera camera;
+
+    // Terrain colors
+    private static final Color WATER_COLOR       = new Color(0.1f, 0.3f, 0.5f, 1.0f); // Softer deep blue
+    private static final Color BEACH_COLOR       = new Color(0.8f, 0.7f, 0.5f, 1.0f); // More muted sandy
+    private static final Color DESERT_COLOR      = new Color(0.7f, 0.6f, 0.4f, 1.0f); // Softer muted tan
+    private static final Color FOREST_COLOR      = new Color(0.2f, 0.5f, 0.2f, 1.0f); // Softer dark green
+    private static final Color HILLS_COLOR       = new Color(0.4f, 0.3f, 0.2f, 1.0f); // Muted earthy brown
+    private static final Color MOUNTAIN_COLOR    = new Color(0.6f, 0.6f, 0.6f, 1.0f); // Softer neutral gray
+    private static final Color PLAINS_COLOR      = new Color(0.4f, 0.6f, 0.3f, 1.0f); // Softer olive green
+
+    // Resource colors
+    private static final Color FOOD_COLOR        = new Color(0.0f, 0.8f, 0.0f, 1.0f); // Bright green
+    private static final Color GOLD_COLOR        = new Color(1.0f, 0.8f, 0.0f, 1.0f); // Bright yellow
+    private static final Color IRON_COLOR        = new Color(0.8f, 0.8f, 0.8f, 1.0f); // Light gray
+    private static final Color STONE_COLOR       = new Color(0.5f, 0.5f, 0.5f, 1.0f); // Neutral gray
+    private static final Color WOOD_COLOR        = new Color(0.5f, 0.3f, 0.0f, 1.0f); // Dark brown
 
     private static class ViewBounds {
         int startX, endX, startY, endY;
@@ -380,24 +391,24 @@ public class SurfaceMapRenderer implements IMapRenderer<SurfaceMap.SurfaceTile> 
 
     private Color getTerrainColor(TerrainType terrain) {
         switch (terrain) {
-            case WATER: return Constants.WATER_COLOR;
-            case BEACH: return Constants.BEACH_COLOR;
-            case DESERT: return Constants.DESERT_COLOR;
-            case FOREST: return Constants.FOREST_COLOR;
-            case HILLS: return Constants.HILLS_COLOR;
-            case MOUNTAIN: return Constants.MOUNTAIN_COLOR;
-            case PLAINS: return Constants.PLAINS_COLOR;
+            case WATER: return WATER_COLOR;
+            case BEACH: return BEACH_COLOR;
+            case DESERT: return DESERT_COLOR;
+            case FOREST: return FOREST_COLOR;
+            case HILLS: return HILLS_COLOR;
+            case MOUNTAIN: return MOUNTAIN_COLOR;
+            case PLAINS: return PLAINS_COLOR;
             default: return Color.WHITE;
         }
     }
 
     private Color getResourceColor(ResourceType type) {
         switch (type) {
-            case FOOD: return Constants.FOOD_COLOR;
-            case WOOD: return Constants.WOOD_COLOR;
-            case STONE: return Constants.STONE_COLOR;
-            case IRON: return Constants.IRON_COLOR;
-            case GOLD: return Constants.GOLD_COLOR;
+            case FOOD: return FOOD_COLOR;
+            case WOOD: return WOOD_COLOR;
+            case STONE: return STONE_COLOR;
+            case IRON: return IRON_COLOR;
+            case GOLD: return GOLD_COLOR;
             default: return Color.WHITE;
         }
     }

@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lpc.civilisation.Civilisation;
+import org.lpc.map.BaseMap;
 import org.lpc.map.MapSystem;
 
 import java.io.IOException;
@@ -28,6 +29,10 @@ public class GameStateManager implements Serializable {
     public void update() {
         mapSystem.update();
         civilisation.update();
+    }
+
+    public BaseMap<?> getMap() {
+        return mapSystem.getMap();
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {

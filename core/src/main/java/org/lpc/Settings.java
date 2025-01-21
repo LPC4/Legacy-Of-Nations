@@ -46,6 +46,4 @@ public class Settings {
             ticksPerSecond /= 2;
         }
     }
-
-
 }

@@ -36,7 +36,6 @@ public class StartScreen implements Screen {
         if (START_FULLSCREEN) {
             toggleFullscreen();
         }
-
         setupStage();
     }
 
@@ -127,23 +126,18 @@ public class StartScreen implements Screen {
     }
 
     @Override
-    public void pause() {
-        // Handle pause if needed
-    }
-
-    @Override
-    public void resume() {
-        // Handle resume if needed
-    }
-
-    @Override
-    public void hide() {
-        // Cleanup when this screen is no longer visible
-    }
-
-    @Override
     public void dispose() {
         LOGGER.info("Start screen disposed");
         stage.dispose();
     }
+
+    @Override
+    public void pause() {}
+
+    @Override
+    public void resume() {}
+
+    @Override
+    public void hide() {}
+
 }

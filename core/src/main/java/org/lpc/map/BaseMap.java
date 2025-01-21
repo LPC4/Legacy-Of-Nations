@@ -14,14 +14,17 @@ import org.lpc.utility.Position;
 @Getter
 @Setter
 public abstract class BaseMap<T extends BaseMap.BaseTile> {
+    protected final MainGame game;
+    protected MapScale scale;
     protected int width;
     protected int height;
+    // Map specific implementations
     protected final IMapGenerator<T> mapGenerator;
     protected final IMapRenderer<T> renderer;
+    protected final IMapInput input;
     protected final T[][] tiles;
-    protected final MainGame game;
 
-    // Each map type implements their own tile type
+    // Each map type implements their own tile type which extends this class
     @Getter
     @Setter
     public abstract static class BaseTile {
@@ -39,13 +42,15 @@ public abstract class BaseMap<T extends BaseMap.BaseTile> {
         public abstract void update();
     }
 
-    public BaseMap(int width, int height, MainGame game, IMapGenerator<T> mapGenerator, IMapRenderer<T> renderer, T[][] tiles) {
+    public BaseMap(MapScale scale, int width, int height, MainGame game, IMapGenerator<T> mapGenerator, IMapRenderer<T> renderer, T[][] tiles, IMapInput input) {
+        this.scale = scale;
         this.width = width;
         this.height = height;
         this.mapGenerator = mapGenerator;
         this.renderer = renderer;
         this.game = game;
         this.tiles = tiles;
+        this.input = input;
 
         generateMap();
     }
@@ -59,27 +64,6 @@ public abstract class BaseMap<T extends BaseMap.BaseTile> {
     protected void generateMap() {
         mapGenerator.generateTerrain(tiles, width, height);
         mapGenerator.generateResources(tiles);
-    }
-
-    public BaseTile[] getNeighbours(BaseTile tile) {
-        int x = tile.getPosition().getGridX();
-        int y = tile.getPosition().getGridY();
-        BaseTile[] neighbours = new BaseTile[4];
-
-        if (x > 0) {
-            neighbours[0] = tiles[x - 1][y];
-        }
-        if (x < width - 1) {
-            neighbours[1] = tiles[x + 1][y];
-        }
-        if (y > 0) {
-            neighbours[2] = tiles[x][y - 1];
-        }
-        if (y < height - 1) {
-            neighbours[3] = tiles[x][y + 1];
-        }
-
-        return neighbours;
     }
 }
 

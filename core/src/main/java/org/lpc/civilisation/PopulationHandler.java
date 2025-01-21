@@ -92,5 +92,8 @@ public class PopulationHandler {
         return population / 50;
     }
 
-
+    @Override
+    public String toString() {
+        return "Population: " + population + "\n";
+    }
 }

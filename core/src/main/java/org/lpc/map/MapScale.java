@@ -14,19 +14,14 @@ public enum MapScale {
     SURFACE(1, 128),
 
     /**
-     * Regional level scale: 64 pixels per grouped tile.
+     * Regional level scale
      */
-    REGIONAL(4, 64),
+    REGIONAL(4, 128),
 
     /**
-     * Continental level scale: 64 pixels per region.
+     * Planetary level scale
      */
-    CONTINENTAL(16, 64),
-
-    /**
-     * Planetary level scale: 64 pixels per planet tile.
-     */
-    PLANETARY(64, 64);
+    PLANETARY(64, 128);
 
     private final int tilesPerUnit;
     private final int pixelsPerTile;

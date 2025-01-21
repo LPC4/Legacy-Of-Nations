@@ -8,22 +8,29 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lpc.civilisation.Civilisation;
 import org.lpc.map.maps.SurfaceMap;
 
-@Getter
+@Getter @Setter
 public class UIRenderer {
     private static final Logger LOGGER = LogManager.getLogger(UIRenderer.class);
-
-    private final MainGame game;
-    private final BitmapFont font;
     private static final int PADDING = 10;
     private static final int LINE_HEIGHT = 20;
 
+    private final MainGame game;
+    private final BitmapFont font;
+
     private SurfaceMap.SurfaceTile selectedTile;
     private int mouseX, mouseY;
+    private TileInfoMode tileInfoMode = null;
+
+    private enum TileInfoMode {
+        OVERLAY,
+        TOOLTIP
+    }
 
     public UIRenderer(MainGame game) {
         this.game = game;
@@ -80,8 +87,6 @@ public class UIRenderer {
         font.setColor(Color.WHITE);
         font.draw(batch, tooltip.toString(), renderX, renderY);
     }
-
-
 
     public void setSelectedTile(SurfaceMap.SurfaceTile tile, int screenX, int screenY) {
         this.selectedTile = tile;

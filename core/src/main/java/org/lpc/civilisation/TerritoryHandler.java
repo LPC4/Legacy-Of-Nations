@@ -160,6 +160,4 @@ public class TerritoryHandler {
             surfaceTerritory.remove((SurfaceMap.SurfaceTile) tile);
         }
     }
-
-
 }

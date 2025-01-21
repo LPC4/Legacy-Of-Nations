@@ -16,8 +16,9 @@ import org.lpc.terrain.resources.ResourceType;
 public class Civilisation {
     private final MainGame game;
     private final GameStateManager gameStateManager;
+
     private final String name;
-    private final Color color = new Color(0.5f, 0.0f, 0.5f, 0.5f); // purple
+    private final Color color;
     private final ResourceHandler resourceHandler;
     private final TerritoryHandler territoryHandler;
     private final PopulationHandler populationHandler;
@@ -29,27 +30,29 @@ public class Civilisation {
         this.resourceHandler = new ResourceHandler(this);
         this.territoryHandler = new TerritoryHandler(this);
         this.populationHandler = new PopulationHandler(this, population);
+        this.color = new Color(0.5f, 0.0f, 0.5f, 0.5f); // purple
 
         initCivilisation();
     }
 
     private void initCivilisation() {
-        // Claim starting territory based on starting population
-        SurfaceMap map = gameStateManager.getMapSystem().getSurfaceMap();
+        claimStartingTerritory();
+        addStartingResources();
+    }
 
+    private void claimStartingTerritory() {
+        SurfaceMap map = gameStateManager.getMapSystem().getSurfaceMap();
         territoryHandler.claimStartingTerritory(map.getWidth() / 2,  map.getHeight() / 2, populationHandler.getStartingRadius());
         territoryHandler.setStartingBuildings();
+    }
 
-        // Add starting resources
+    private void addStartingResources() {
         resourceHandler.addResource(ResourceType.FOOD, 100);
     }
 
     public void update() {
-        // Update resource handler and territory handler
         territoryHandler.update();
         resourceHandler.update();
-
-        // Update population
         populationHandler.update();
     }
 
@@ -61,16 +64,11 @@ public class Civilisation {
         return resourceHandler.getResourceAmount(type);
     }
 
-    public int getPopulation() {
-        return populationHandler.getPopulation();
-    }
-
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Civilisation: ").append(name).append("\n");
-        builder.append("Population: ").append(getPopulation()).append("\n");
-        builder.append(resourceHandler.toString());
-        return builder.toString();
+        return
+            "Civilisation: " + name + "\n" +
+            populationHandler.toString() + "\n" +
+            resourceHandler.toString();
     }
 }

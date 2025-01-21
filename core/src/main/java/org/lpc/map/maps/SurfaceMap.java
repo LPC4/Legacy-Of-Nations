@@ -18,8 +18,6 @@ import static org.lpc.map.maps.SurfaceMap.*;
 @Getter
 @Setter
 public class SurfaceMap extends BaseMap<SurfaceTile> {
-    //private final VegetationManager vegetationManager;
-    private final MapScale scale = MapScale.SURFACE;
 
     @Getter
     @Setter
@@ -65,12 +63,14 @@ public class SurfaceMap extends BaseMap<SurfaceTile> {
 
     public SurfaceMap(int width, int height, MainGame game) {
         super(
+            MapScale.SURFACE,
             width,
             height,
             game,
             new SurfaceMapGenerator(),
             new SurfaceMapRenderer(game),
-            new SurfaceTile[width][height]
+            new SurfaceTile[width][height],
+            new SurfaceMapInput(game)
         );
         //this.vegetationManager = new VegetationManager();
     }
